@@ -1,0 +1,41 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button geodash-btn-close></button>
+      <h4 class="modal-title" id="myModalLabel">{{ about.title }}</h4>
+    </div>
+    <div class="modal-body">
+      <div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li
+            role="presentation"
+            ng-class="$first ? 'active' : ''"
+            ng-repeat="pane in about.panes track by $index">
+            <a
+              href="#{{ pane.id }}"
+              aria-controls="{{ pane.id }}"
+              role="tab"
+              data-toggle="tab"
+              style="padding-left:8px; padding-right: 8px;"
+              ng-bind-html="pane.tab.label | default:'Default' | tabLabel"></a>
+          </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div
+            ng-class="$first ? 'tab-pane fade in active' : 'tab-pane fade'"
+            ng-repeat="pane in about.panes track by $index"
+            id="{{ pane.id }}"
+            role="tabpanel"
+            style="padding: 10px;">
+            <span ng-bind-html="pane.content | md2html | default:'No content given.'"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+---
+controllers: []
+directives:
+  - geodashModalAbout.js
+templates:
+  - geodash_modal_about.tpl.html

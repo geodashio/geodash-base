@@ -1,0 +1,50 @@
+@import "variables.less";
+
+.geodash-map-overlays {
+
+  .geodash-map-grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: @geodash-overlay-z-index - 1;
+    overflow: hidden;
+    display: none;
+
+    table {
+      width: 100%;
+      height: 100%;
+
+      td {
+        width: 50%;
+      }
+    }
+  }
+
+  .geodash-map-grid.on {
+    display: block;
+    table {
+      td {
+        border: 2px solid blue;
+      }
+      td:hover {
+        background: rgba(0, 0, 128, 0.25);
+      }
+    }
+  }
+
+  .geodash-map-overlay {
+    position: absolute;
+    z-index: @geodash-overlay-z-index;
+    color: white;
+    padding: 10px;
+    box-sizing: padding-box;
+  }
+
+  .geodash-map-overlay:hover {
+    border: 4px solid blue;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+
+}

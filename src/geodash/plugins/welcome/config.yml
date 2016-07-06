@@ -1,0 +1,6 @@
+---
+controllers: []
+directives:
+  - geodashModalWelcome.js
+templates:
+  - modal/geodash_modal_welcome.tpl.html

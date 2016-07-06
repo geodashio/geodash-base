@@ -1,0 +1,22 @@
+---
+name: "geodash"
+version: "0.0.1"
+description: "geodash 0.0.1"
+path:
+  geodash: "./src/geodash"
+plugins:
+  - base
+  - legend
+  - welcome
+  - about
+  - download
+  - overlays
+dependencies:
+  production:
+    project: []
+    javascript:
+      - "./src/js/main/*.js"
+  test:
+    javascript:
+      - "./src/js/main/*.js"
+      - "./src/js/polyfill/*.js"

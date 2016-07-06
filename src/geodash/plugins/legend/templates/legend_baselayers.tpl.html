@@ -1,0 +1,39 @@
+<div class="geodash-map-legend-baselayers geodash-radio-group">
+  <div
+    ng-repeat="layer in baselayers track by $index"
+    ng-init="layerIndex = $index"
+    ng-if="layer.legend!==undefined"
+    class="geodash-map-legend-item noselect"
+    data-layer="{{ layer.id }}">
+    <div class="geodash-map-legend-item-left">
+      <div class="geodash-map-legend-item-icon geodash-map-legend-item-more">
+        <a
+          class="geodash-intent"
+          data-intent-ctrl="geodash-map-legend"
+          data-intent-name="toggleModal"
+          data-intent-data="{{ html5data('toggleModal', 'geodash-modal-layer-more', 'baselayer', layer) }}">
+          <i class="fa fa-info-circle"></i>
+        </a>
+      </div><!--
+      --><div class="geodash-map-legend-item-icon geodash-map-legend-item-visibility">
+           <a
+             ng-class=" layer.id == state.view.baselayer ? 'geodash-map-legend-item-visibility-button geodash-intent geodash-radio geodash-on' : 'geodash-map-legend-item-visibility-button geodash-intent geodash-radio'"
+             data-intent-name="switchBaseLayer"
+             data-intent-data="{&quot;layer&quot;:&quot;{{ layer.id }}&quot;}"
+             data-intent-class-on="geodash-on"
+             data-intent-class-off=""
+             data-intent-ctrl="geodash-map-legend">
+             <i class="fa fa-eye geodash-on"></i><i class="fa fa-eye-slash geodash-off"></i>
+           </a>
+         </div><!--
+      --><div class="geodash-map-legend-item-symbol" style="width: 10px;"></div>
+    </div><!--
+    --><div class="geodash-map-legend-item-right">
+      <div
+        class="geodash-map-legend-item-label"
+        style="{{ layer.id == state.view.baselayer ? 'width: 100%;' : 'width: 100%;opacity: 0.4;' }}">
+        <span ng-bind-html="layer.legend.label | md2html"></span>
+      </div>
+    </div>
+  </div>
+</div>
