@@ -1,0 +1,51 @@
+---
+title:
+  type: markdown
+  label: Title
+  placeholder: Title
+  required: true
+  description: "The title of your dashboard."
+slug:
+  type: text
+  label: Slug
+  placeholder: Slug
+  required: true
+  description: "The url for the dasboard such as http://geodash.io/dashboard/<slug>."
+description:
+  type: markdown
+  label: Description
+  placeholder: Description
+  multiline: true
+  required: true
+  description: "The generic description for the dashboard.  This is mostly used internally.  Use about or welcome for user descriptions."
+about:
+  title:
+    type: markdown
+    label: Title
+    placeholder: Title
+    multiline: false
+    required: true
+    description: "The title for the about modal."
+welcome:
+  title:
+    type: markdown
+    label: Title
+    placeholder: Title
+    multiline: false
+    required: true
+    description: "The title for the welcome modal."
+  intro:
+    type: markdown
+    label: Introduction
+    placeholder: Introduction
+    multiline: true
+    required: true
+    description: "The text (in markdown) for the default intro tab of the welcome modal."
+  about:
+    type: markdown
+    label: About
+    placeholder: About
+    multiline: true
+    required: true
+    description: "The text (in markdown) for the about tab of the welcome modal."
+download:

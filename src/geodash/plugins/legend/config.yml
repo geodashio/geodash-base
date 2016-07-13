@@ -23,3 +23,5 @@ templates:
   - legend_featurelayers.tpl.html
 less:
   - legend.less
+schemas:
+  - legend_schema.yml

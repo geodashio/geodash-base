@@ -1,0 +1,148 @@
+---
+overlays:
+  type: objectarray
+  label: Static Overlays
+  placeholder: "Static Overlays"
+  required: true
+  description: "Static Overlays available."
+  schema:
+    verbose_singular: Static Overlay
+    verbose_plurl: Static Overlays
+    fields:
+      - id: id
+        type: text
+        label: ID
+        placeholder: ID
+        required: true
+        description: "The id of your static overlay."
+      - id: type
+        type: text
+        label: Type
+        placeholder: text or image
+        required: true
+        description: "The type of your static overlay (text or image)."
+        options:
+          - text
+          - image
+      - id: position.top
+        type: text
+        label: Top
+        placeholder: auto
+        required: true
+        description: "The top position of your static overlayer (in pixels or percentage)."
+      - id: position.bottom
+        type: text
+        label: Bottom
+        placeholder: auto
+        required: true
+        description: "The bottom position of your static overlayer (in pixels or percentage)."
+      - id: position.left
+        type: text
+        label: Left
+        placeholder: auto
+        required: true
+        description: "The left position of your static overlayer (in pixels or percentage)."
+      - id: position.right
+        type: text
+        label: Right
+        placeholder: auto
+        required: true
+        description: "The right position of your static overlayer (in pixels or percentage)."
+      - id: width
+        type: text
+        label: Width
+        placeholder: width
+        required: true
+        description: "The width of your static overlayer (in pixels or percentage)."
+      - id: height
+        type: text
+        label: Height
+        placeholder: height
+        required: true
+        description: "The height of your static overlayer (in pixels or percentage)."
+      - id: padding
+        type: text
+        label: Padding
+        placeholder: 0px 0px 0px 0px;
+        required: false
+        description: "The padding to apply to your static overlayer."
+      - id: background
+        type: text
+        label: Background
+        placeholder: transparent;
+        required: false
+        description: "The background to apply to your static overlayer."
+      - id: opacity
+        type: text
+        label: Opacity
+        placeholder: transparent;
+        required: false
+        description: "The opacity to apply to your static overlayer."
+      - id: text.content
+        type: text
+        label: Text Content
+        placeholder: text
+        required: false
+        description: "The text of your static overlayer."
+        when:
+          field: type
+          values:
+            - text
+      - id: text.font.family
+        type: text
+        label: Text Font Family
+        placeholder: Arial
+        required: false
+        description: "The font family of your text in your static overlayer."
+        options:
+          - Arial
+          - Open Sans
+          - Verdana
+          - Impact
+        when:
+          field: type
+          values:
+            - text
+      - id: text.font.size
+        type: text
+        label: Text Font Size
+        placeholder: 12px
+        required: false
+        description: "The font size of your text in your static overlayer."
+        when:
+          field: type
+          values:
+            - text
+      - id: text.font.style
+        type: text
+        label: Text Font Style
+        placeholder: normal or italic
+        required: false
+        description: "The font style of your text in your static overlayer."
+        options:
+          - normal
+          - italic
+        when:
+          field: type
+          values:
+            - text
+      - id: text.shadow
+        type: text
+        label: Text Shadow
+        placeholder: none;
+        required: false
+        description: "The text-shadow to apply to your static overlayer."
+        when:
+          field: type
+          values:
+            - text
+      - id: image.url
+        type: text
+        label: Image Url
+        placeholder: image url
+        required: false
+        description: "The URL of your image static overlayer."
+        when:
+          field: type
+          values:
+            - image

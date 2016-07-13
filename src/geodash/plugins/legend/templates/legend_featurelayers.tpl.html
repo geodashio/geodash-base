@@ -103,7 +103,7 @@
       --><div
            class="geodash-map-legend-item-label"
            style="{{ layer.id | inArray : state.view.featurelayers | ternary : '' : 'opacity: 0.4;' }}">
-        <span ng-bind-html="layer.legend.label | md2html"></span>
+        <span ng-bind-html="layer.legend.label | default_if_undefined_or_blank : layer.title | md2html"></span>
       </div>
     </div>
   </div>

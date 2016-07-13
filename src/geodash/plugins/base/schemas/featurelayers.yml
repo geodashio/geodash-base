@@ -1,0 +1,111 @@
+---
+featurelayers:
+  type: objectarray
+  label: Feature Layers
+  placeholder: "Feature Layers"
+  required: true
+  description: "Feature layers available."
+  schema:
+    verbose_singular: Feature Layer
+    verbose_plurl: Feature Layers
+    fields:
+      - id: id
+        type: text
+        label: ID
+        placeholder: ID
+        required: true
+        description: "The id of your base layer."
+      - id: title
+        type: text
+        label: Title
+        placeholder: title
+        required: true
+        description: "The title of your base layer."
+      - id: description
+        type: text
+        label: Description
+        placeholder: description
+        required: true
+        description: "The description of your base layer."
+      - id: "source.name"
+        type: text
+        label: Source Name
+        placeholder: source name
+        required: true
+        description: "The name of the source of your feature layer."
+      - id: "source.attribution"
+        type: text
+        label: Source Attribution
+        placeholder: source attribution
+        required: true
+        description: "The attribution of the source of feature layer."
+      - id: "legend.label"
+        type: "text"
+        label: "Legend Label"
+        placeholder: "legend label"
+        required: false
+        description: "The label to use in the legend for this layer."
+      - id: "type"
+        type: text
+        label: Type
+        placeholder: wms, geojson
+        required: false
+        description: "The type of the feature layer (wms, geojson)."
+        options:
+          - wms
+          - geojson
+      - id: "wms.layers"
+        type: text
+        label: Layers
+        placeholder: wms, geojson
+        required: false
+        description: "The wms layers of the feature layer."
+        when:
+          field: type
+          values:
+            - wms
+      - id: "wms.url"
+        type: text
+        label: WMS URL
+        placeholder: "http://geonode.wfp.org/geoserver/geonode/wms"
+        required: false
+        description: "The url of the WMS server."
+        when:
+          field: type
+          values:
+            - wms
+      - id: "wfs.version"
+        type: text
+        label: WFS URL
+        placeholder: "1.0.0"
+        required: false
+        description: "The version of the WFS server."
+        options:
+          - "1.0.0"
+          - "1.1.0"
+          - "2.0"
+          - "2.0.2"
+        when:
+          field: type
+          values:
+            - wms
+      - id: "wfs.url"
+        type: text
+        label: WFS URL
+        placeholder: "http://geonode.wfp.org/cors/geoserver/wfs"
+        required: false
+        description: "The url of the WFS server."
+        when:
+          field: type
+          values:
+            - wms
+      - id: "geojson.url"
+        type: text
+        label: GeoJSON URL
+        placeholder: "http://example.com/data.geojson"
+        required: false
+        description: "The url of the geojson service/file."
+        when:
+          field: type
+          values:
+            - geojson

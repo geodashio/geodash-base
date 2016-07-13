@@ -62,3 +62,9 @@ filters:
   - url/url_geojson.js
   - url/url_kml.js
   - url/url_describefeaturetype.js
+schemas:
+  - base.yml
+  - baselayers.yml
+  - featurelayers.yml
+  - controls.yml
+  - view.yml

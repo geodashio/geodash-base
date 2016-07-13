@@ -105,14 +105,16 @@ geodash.init.listeners = function()
           that.removeClass(that.data("intent-class-off"));
           siblings.addClass(that.data("intent-class-off"));
         }
+        var intentName = that.attr('data-intent-name');
         var intentData = JSON.parse(that.attr('data-intent-data')); // b/c jquery data not updated by angular
-        geodash.api.intend(that.attr('data-intent-name'), intentData, scope);
+        geodash.api.intend(intentName, intentData, scope);
       }
     }
     else
     {
+      var intentName = that.attr('data-intent-name');
       var intentData = JSON.parse(that.attr('data-intent-data'));
-      geodash.api.intend(that.attr('data-intent-name'), intentData, scope);
+      geodash.api.intend(intentName, intentData, scope);
     }
   });
 };

@@ -7,7 +7,7 @@ geodash.init_controller_base = function(app)
 
 geodash.init_controller = function(that, app, controller)
 {
-  var controllerName = that.data('controllerName') || that.attr('name') || that.attr('id');
+  var controllerName = that.data('controllerName') || that.attr('geodash-controller') || that.attr('name') || that.attr('id');
   if(controllerName == undefined || controllerName == null || controllerName == "")
   {
     console.log("Error: Could not load controller for element, because name could not be resolved");
@@ -35,7 +35,7 @@ geodash.init_controllers = function(that, app, controllers)
         }
         catch(err)
         {
-          console.log("Could not load Geosite Controller \""+c.selector+"\"", err);
+          console.log("Could not load GeoDash Controller \""+c.selector+"\"", err);
         }
     });
   }

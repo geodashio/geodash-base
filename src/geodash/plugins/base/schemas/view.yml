@@ -1,0 +1,50 @@
+---
+view:
+  baselayer:
+    type: text
+    label: Default Base Layer
+    placeholder: osm
+    required: true
+    description: "The default base layer shown on page load."
+  latitude:
+    order: 0
+    type: int
+    label: Latitude
+    placeholder: Latitude
+    description: "The default latitude when opening the dashboard."
+  longitude:
+    order: 1
+    type: int
+    label: Longitude
+    placeholder: Longitude
+    description: "The default longitude when opening the dashboard."
+  zoom:
+    order: 2
+    type: int
+    label: Zoom
+    placeholder: Zoom
+    minValue: 0
+    maxValue: 18
+    description: "The default zoom when opening the dashboard."
+  minZoom:
+    order: 3
+    type: int
+    label: Minimum Zoom
+    placeholder: Minimum Zoom
+    minValue: 0
+    maxValue: 18
+    description: "The minimum a user can zoom out."
+  maxZoom:
+    order: 4
+    type: int
+    label: Maximum Zoom
+    placeholder: Maximum Zoom
+    minValue: 0
+    maxValue: 18
+    description: "The maximum a user can zoom in."
+renderlayers:
+  type: stringarray
+  label: Render Layers
+  placeholder: "Render Layers"
+  required: true
+  description: "The layers in stack order to render; the first is on top; the last is on the bottom."
