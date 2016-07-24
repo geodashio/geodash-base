@@ -20,3 +20,58 @@ dependencies:
     javascript:
       - "./src/js/main/*.js"
       - "./src/js/polyfill/*.js"
+resources:
+  - name: angular.js
+    path: "./lib/angularjs/{{ version }}/angular.js"
+  - name: angular-route.js
+    path: "./lib/angularjs/{{ version }}/angular-route.js"
+  - name: angular-sanitize.js
+    path: "./lib/angularjs/{{ version }}/angular-sanitize.js"
+  - name: angular-cookies.js
+    path: "./lib/angularjs/{{ version }}/angular-cookies.js"
+  - name: jquery-ui.min.css
+    path: ./lib/jquery-ui/1.11.4/jquery-ui.min.css
+  - name: select2.min.css
+    path: ./lib/select2/select2-4.0.1/dist/css/select2.min.css
+  - name: select2-bootstrap.min.css
+    path: ./lib/select2-bootstrap-theme/dist/select2-bootstrap.min.css
+  - name: typeaheadjs.css
+    path: ./lib/typeahead.js-bootstrap-css/typeaheadjs.css
+  - name: c3.min.css
+    path: "./lib/c3/0.4.10/c3.min.css"
+  - name: leaflet.css
+    path: ./lib/leaflet/1.0.0-b1/leaflet.css
+  - name: leaflet.label.css
+    path: ./lib/Leaflet.label/leaflet-master/leaflet.label.css
+  - name: font-awesome.min.css
+    path: ./lib/font-awesome/4.5.0/css/font-awesome.min.css
+  - name: jquery.js
+    path: "./lib/jquery/{{ version }}/jquery-{{ version }}.js"
+  - name: jquery-ui.js
+    path: "./lib/jquery-ui/{{ version }}/jquery-ui.js"
+  - name: yaml.js
+    path: "./lib/yamljs/develop/dist/yaml.js"
+  - name: select2.full.js
+    path: "./lib/select2/select2-{{ version}}/dist/js/select2.full.js"
+  - name: typeahead.custom.js
+    path: "./lib/typeahead/typeahead-custom.js"
+  - name: bootstrap.js
+    path: "./lib/bootstrap/{{ version }}/dist/js/bootstrap.js"
+  - name: d3.js
+    path: "./lib/d3/{{ version }}/d3.js"
+  - name: c3.js
+    path: "./lib/c3/{{ version }}/c3.js"
+  - name: leaflet-src.js
+    path: "./lib/leaflet/{{ version }}/leaflet-src.js"
+  - name: leaflet.utfgrid-src.js
+    path: "./lib/Leaflet.utfgrid/dist/leaflet.utfgrid-src.js"
+  - name: wfp-simpleheat.js
+    path: "./lib/Leaflet.heat/custom/wfp-simpleheat.js"
+  - name: wfp-heatcanvas.js
+    path: "./lib/Leaflet.heat/custom/wfp-heatcanvas.js"
+  - name: wfp-heatlayer.js
+    path: "./lib/Leaflet.heat/custom/wfp-heatlayer.js"
+  - name: leaflet.label-src.js
+    path: "./lib/Leaflet.label/leaflet-master/leaflet.label-src.js"
+  - name: showdown.js
+    path: "./lib/showdown/{{ version }}/showdown.js"

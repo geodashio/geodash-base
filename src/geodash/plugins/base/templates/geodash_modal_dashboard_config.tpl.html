@@ -2,7 +2,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <button geodash-btn-close></button>
-      <h4 class="modal-title" id="myModalLabel">Configuration / {{ map_config.title }}</h4>
+      <h4 class="modal-title" id="myModalLabel">Configuration / {{ workspace.config.title }}</h4>
     </div>
     <div class="modal-body">
       <div>
@@ -136,7 +136,7 @@
             role="tabpanel"
             style="padding: 10px;">
             <h3>Dashboard Configuration as YAML</h3>
-            <pre style="word-wrap: break-word; white-space: pre-wrap;">{{ map_config | yaml : 8 }}</pre>
+            <pre style="word-wrap: break-word; white-space: pre-wrap;">{{ workspace.config | yaml : 8 }}</pre>
           </div>
           <div
             id="modal-dashboard-config-json"
@@ -144,7 +144,7 @@
             role="tabpanel"
             style="padding: 10px;">
             <h3>Dashboard Configuration as JSON</h3>
-            <pre style="word-wrap: break-word; white-space: pre-wrap;">{{ map_config | json }}</pre>
+            <pre style="word-wrap: break-word; white-space: pre-wrap;">{{ workspace.config | json }}</pre>
           </div>
         </div>
       </div>
