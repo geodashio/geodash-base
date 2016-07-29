@@ -52,7 +52,7 @@ filters:
   - format/formatFloat.js
   - format/formatInteger.js
   - format/formatArray.js
-  - format/formatMonth.js m
+  - format/formatMonth.js
   - math/eq.js
   - math/lte.js
   - math/gte.js

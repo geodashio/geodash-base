@@ -5,7 +5,12 @@ var fs = require('fs');
 var concat = require('gulp-concat');
 var minify = require('gulp-minify');
 var rename = require('gulp-rename');
+//
+//var uglifyjs = require('uglify-js');
+//uglifyjs.dead_code = false;
+//var minifier = require('gulp-uglify/minifier');
 var uglify = require('gulp-uglify');
+//
 var jshint = require('gulp-jshint');
 var less = require('gulp-less');
 var templateCache = require('gulp-angular-templatecache');
@@ -39,14 +44,21 @@ var geodash =
     compile_js: undefined,
     compile_less: undefined
   },
-  resolveBuild: function(x){
-    return path.join(rootConfig['build'][x]['dest'], rootConfig['build'][x]['outfile']);
+  resolveBuild: function(x, minified){
+    geodash.log(["!","!", "!", "resolveBuild("+x+","+minified+")"]);
+    var outfile = rootConfig['build'][x]['outfile'];
+    if(minified == true)
+    {
+      outfile = path.basename(outfile, path.extname(outfile)) + ".min.js";
+    }
+    geodash.log(["build "+ outfile, minified]);
+    return path.join(rootConfig['build'][x]['dest'], outfile);
   },
   resolveVariable: function(x)
   {
     return geodash.var[x];
   },
-  resolveResource: function(project, name, version)
+  resolveResource: function(project, name, version, minified)
   {
     var resourcePath = undefined;
     if(geodash.config[project]['resources'] == undefined)
@@ -59,13 +71,13 @@ var geodash =
     {
       if(resources[i].name == name)
       {
-        resourcePath = resources[i].path;
+        resourcePath = (minified == true && (resources[i].minified != undefined)) ? resources[i].minified : resources[i].path;
         break;
       }
     }
     if(version != undefined)
     {
-      resourcePath = resourcePath.replace(new RegExp("{{(\\s+)version(\\s+)}}",'gi'), version);
+      resourcePath = resourcePath.replace(new RegExp("{{(\\s*)version(\\s*)}}",'gi'), version);
     }
     resourcePath = path.join(config.path.base, resourcePath);
     return resourcePath;
@@ -94,6 +106,8 @@ var geodash =
   },
   resolve: function(x)
   {
+    geodash.log(["\n","resolve("+JSON.stringify(x.name)+")"]);
+    x = merge(true, x);
     if(Array.isArray(x.src))
     {
       var newSource = [];
@@ -111,7 +125,7 @@ var geodash =
             var names = Array.isArray(y.names) ? y.names : [y.name];
             for(var j = 0; j < names.length; j++)
             {
-              var z = geodash.resolveResource(y.project, names[j], y.version);
+              var z = geodash.resolveResource(y.project, names[j], y.version, (x.minified == true));
               if(z == undefined)
               {
                 geodash.error("Resolved resource "+y.project+":"+y.name+" is undefined.");
@@ -137,7 +151,7 @@ var geodash =
           }
           else if(y.type == "build")
           {
-            newSource.push(geodash.resolveBuild(y.name));
+            newSource.push(geodash.resolveBuild(y.name, (x.minified == true)));
           }
           else
           {
@@ -162,16 +176,36 @@ var geodash =
   },
   compile: function(t)
   {
-    t = geodash.resolve(t);
+    t = geodash.resolve(t); // Important to pass copy to resolve
     geodash.log(["", "geodash.compile(\""+t.name+"\")"]);
+
+    if(Array.isArray(t.src) && t.src.length == 0)
+    {
+      geodash.log(["Nothing to do since t.src is empty array."]);
+      return true;
+    }
+
     if(t.type=="js")
     {
-      return gulp.src(t.src, {base: './'})
-        .pipe(concat(t.outfile))
-        .pipe(gulp.dest(t.dest))
-        .pipe(rename({ extname: '.min.js'}))
-        .pipe(uglify())
-        .pipe(gulp.dest(t.dest));
+      // when t.minified is true, then t.src returns the minified versions
+      if(t.uglify == true)
+      {
+        return gulp.src(t.src, {base: './'})
+          .pipe(concat(t.outfile))
+          .pipe(gulp.dest(t.dest))
+          .pipe(rename({ extname: '.min.js'}))
+          .pipe(uglify({mangle: false}))
+          //.pipe(uglify({mangle: false, preserveComments: 'all'}))
+          //.pipe(minifier({mangle: false, preserveComments: 'all'}, uglifyjs))
+          .pipe(gulp.dest(t.dest));
+      }
+      else
+      {
+        return gulp.src(t.src, {base: './'})
+          .pipe(concat(t.outfile))
+          .pipe(gulp.dest(t.dest));
+      }
+
     }
     else if(t.type=="css")
     {
@@ -499,8 +533,15 @@ gulp.task('compile:monkeypatch.js', ['clean'], function(){
   return geodash.compile(rootConfig['build']['monkeypatch.js']);
 });
 
-gulp.task('compile:monolith.js', ['clean', 'geodash:templates', 'compile:polyfill.js', 'compile:main.js', 'compile:monkeypatch.js'], function(){
-  return geodash.compile(rootConfig['build']['monolith.js']);
+gulp.task('compile:monolith.js', ['clean', 'geodash:templates', 'compile:main.js', 'compile:monkeypatch.js'], function(){
+  var build = rootConfig['build']['monolith.js'];
+  return geodash.compile(build);
+});
+gulp.task('compile:monolith.min.js', ['clean', 'geodash:templates', 'compile:main.js', 'compile:monkeypatch.js'], function(){
+  var build = rootConfig['build']['monolith.js'];
+  build.minified = true;
+  build.outfile = path.basename(build.outfile, path.extname(build.outfile)) + ".min.js";
+  return geodash.compile(build);
 });
 
 gulp.task('copy', ['clean'], function(){
@@ -540,7 +581,8 @@ gulp.task('default', [
   'compile:polyfill.js',
   'compile:main.js',
   'compile:monkeypatch.js',
-  'compile:monolith.js'
+  'compile:monolith.js',
+  'compile:monolith.min.js'
 ]);
 
 

@@ -1,0 +1,6 @@
+---
+controllers: []
+directives:
+  - geodashSidebarToggleLeft.js
+templates:
+  - geodash_sidebar_toggle_left.tpl.html
