@@ -29,21 +29,21 @@ about:
 welcome:
   title:
     type: markdown
-    label: Title
+    label: Welcome / Title
     placeholder: Title
     multiline: false
     required: true
     description: "The title for the welcome modal."
   intro:
     type: markdown
-    label: Introduction
+    label: Welcome / Introduction
     placeholder: Introduction
     multiline: true
     required: true
     description: "The text (in markdown) for the default intro tab of the welcome modal."
   about:
     type: markdown
-    label: About
+    label: Welcome / About
     placeholder: About
     multiline: true
     required: true

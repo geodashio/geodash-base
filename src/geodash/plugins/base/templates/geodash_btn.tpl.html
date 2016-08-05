@@ -1,0 +1,8 @@
+<div
+  ng-class="['input-group-addon','btn',('btn-'|add: mode),((mode == 'clear' || mode =='off') ? 'btn-danger': ''),((mode == 'on') ? 'btn-success': ''),((mode == 'edit') ? 'btn-primary btn-edit': '')]"
+  data-target="{{ target }}"
+  data-toggle="{{ info | ternary_defined : 'tooltip' : undefined }}"
+  data-placement="{{ placement | default_if_undefined : 'left' }}"
+  ng-attr-title="{{ info }}">
+  <i ng-class="['fa',(mode == 'clear' ? 'fa-times' : ''),(mode == 'on' ? 'fa-check' : ''),(mode == 'off' ? 'fa-circle-o' : ''),(mode == 'edit' ? 'fa-pencil-square-o' : '')]"></i>
+</div>

@@ -3,6 +3,7 @@ var geodash = {
   'directives': {},
   'controllers': {},
   'filters': {},
+  'handlers': {},
   'vecmath': {},
   'tilemath': {},
   'api': {},
@@ -48,10 +49,9 @@ geodash.init.directives = function(app)
 geodash.init.listeners = function()
 {
   $('body').on('click', '.btn-clear', function(event) {
-
     // "this" doesn't always point to what you think it does,
     // that's why need to use event.currentTarget
-    var selector = $(event.currentTarget).attr('data-clear');
+    var selector = $(event.currentTarget).attr('data-target');
 
     try{ $(selector).typeahead('close'); }catch(err){};
 
@@ -66,6 +66,24 @@ geodash.init.listeners = function()
         backend.trigger('input');
         backend.change();
       }
+    });
+  });
+  $('body').on('click', '.btn-off', function(event) {
+    var selector = $(event.currentTarget).attr('data-target');
+    $(selector).each(function(){
+      var input = $(this);
+      input.val("false");
+      input.trigger('input');
+      input.change();
+    });
+  });
+  $('body').on('click', '.btn-on', function(event) {
+    var selector = $(event.currentTarget).attr('data-target');
+    $(selector).each(function(){
+      var input = $(this);
+      input.val("true");
+      input.trigger('input');
+      input.change();
     });
   });
 
@@ -131,7 +149,6 @@ geodash.init.typeahead = function($element)
     var template_empty = s.data('template-empty');
     var template_suggestion = s.data('template-suggestion');
 
-
     var bloodhoundData = [];
     if(angular.isString(initialData))
     {
@@ -161,12 +178,27 @@ geodash.init.typeahead = function($element)
       }
       else
       {
-        bloodhoundData = geodash.initial_data["data"][initialData];
+        bloodhoundData = [].concat(geodash.initial_data["data"][initialData]);
+        for(var i = 0; i < bloodhoundData.length; i++)
+        {
+          if(angular.isString(bloodhoundData[i]))
+          {
+            bloodhoundData[i] = {'id': bloodhoundData[i], 'text': bloodhoundData[i]};
+          }
+        }
       }
     }
     else if(Array.isArray(initialData))
     {
-      bloodhoundData = $.map(initialData, function(x, i){ return {'id': x, 'text': x}; });
+      bloodhoundData = [].concat(initialData);
+      for(var i = 0; i < bloodhoundData.length; i++)
+      {
+        if(angular.isString(bloodhoundData[i]))
+        {
+          bloodhoundData[i] = {'id': bloodhoundData[i], 'text': bloodhoundData[i]};
+        }
+      }
+      //bloodhoundData = $.map(initialData, function(x, i){ return {'id': x, 'text': x}; });
     }
 
     if(angular.isDefined(bloodhoundData) && bloodhoundData.length > 0)
@@ -597,6 +629,46 @@ geodash.api.updateValue = function(field_flat, source, target)
     else
     {
       target[finalKey] = source[field_flat];
+    }
+  }
+};
+geodash.api.setValue = function(field_flat, value, target)
+{
+  // Update map_config
+  if(field_flat.indexOf("__") == -1)
+  {
+    target[field_flat] = value;
+  }
+  else
+  {
+    var keyChain = field_flat.split("__");
+    for(var j = 0; j < keyChain.length -1 ; j++)
+    {
+      var newKey = keyChain[j];
+      if(!(newKey in target))
+      {
+        var iTest = -1;
+        try{iTest = parseInt(keyChain[j+1], 10);}catch(err){iTest = -1;};
+        target[newKey] = iTest >= 0 ? [] : {};
+      }
+      target = target[newKey];
+    }
+    var finalKey = keyChain[keyChain.length-1];
+    if(angular.isArray(target))
+    {
+      if(finalKey >= target.length)
+      {
+        var zeros = finalKey - target.length;
+        for(var k = 0; k < zeros; k++ )
+        {
+          target.push({});
+        }
+        target.push(value);
+      }
+    }
+    else
+    {
+      target[finalKey] = value;
     }
   }
 };

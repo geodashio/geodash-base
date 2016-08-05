@@ -2,7 +2,9 @@ geodash.directives["geodashSidebarToggleLeft"] = function(){
   return {
     restrict: 'EA',
     replace: true,
-    scope: true,  // Inherit exact scope from parent controller
+    scope: {
+      "selector": "@selector"
+    },
     templateUrl: 'geodash_sidebar_toggle_left.tpl.html',
     link: function ($scope, $element, attrs){
       setTimeout(function(){

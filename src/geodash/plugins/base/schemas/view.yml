@@ -48,3 +48,4 @@ renderlayers:
   placeholder: "Render Layers"
   required: true
   description: "The layers in stack order to render; the first is on top; the last is on the bottom."
+  source: layers

@@ -9,7 +9,7 @@ directives:
   - tab.js
   - geodashBtnClose.js
   - geodashBtnInfo.js
-  - geodashBtnClear.js
+  - geodashBtn.js
 enumerations:
   - dates.js
 templates:
@@ -17,7 +17,7 @@ templates:
   - geodash_tab.tpl.html
   - geodash_btn_close.tpl.html
   - geodash_btn_info.tpl.html
-  - geodash_btn_clear.tpl.html
+  - geodash_btn.tpl.html
 filters:
   - default.js
   - md2html.js
@@ -41,6 +41,7 @@ filters:
   - common/inArray.js
   - common/not.js
   - common/prepend.js
+  - common/parseTrue.js
   - common/ternary.js
   - common/ternary_defined.js
   - common/yaml.js
@@ -63,6 +64,17 @@ filters:
   - url/url_geojson.js
   - url/url_kml.js
   - url/url_describefeaturetype.js
+handlers:
+  - clickedOnMap.js
+  - hideLayer.js
+  - hideLayers.js
+  - layerLoaded.js
+  - requestToggleComponent.js
+  - showLayer.js
+  - showLayers.js
+  - switchBaseLayer.js
+  - toggleComponent.js
+  - zoomToLayer.js
 schemas:
   - base.yml
   - baselayers.yml
