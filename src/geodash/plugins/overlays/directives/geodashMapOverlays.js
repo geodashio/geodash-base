@@ -4,7 +4,7 @@ geodash.directives["geodashMapOverlays"] = function(){
     replace: true,
     scope: {
       'editable': '@editable'
-    },  // Inherit exact scope from parent controller
+    },
     templateUrl: 'map_overlays.tpl.html',
     link: function ($scope, element, attrs){
 

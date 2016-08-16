@@ -79,13 +79,10 @@ geodash.layers.init_featurelayer_post = function($scope, live, id, fl, visible)
 };
 geodash.layers.init_featurelayer_wms = function($scope, live, map_config, id, layerConfig)
 {
-  //https://github.com/Leaflet/Leaflet/blob/master/src/layer/tile/TileLayer.WMS.js
   var w = layerConfig.wms;
   if(extract("auth", layerConfig, "") == "basic")
   {
-    //http://geonode.wfp.org/geoserver/geonode/wms
     var auth_url = w.url + (w.url.indexOf("?") != -1 ? '&' : '?') + "SERVICE=WMS&REQUEST=GetCapabilities"
-    //$.ajax({url: auth_url, dataType: "text/xml",success: function(response){}});
     $.ajax({
       url: auth_url,
       type: "GET",
@@ -131,7 +128,6 @@ geodash.layers.init_featurelayer_wms = function($scope, live, map_config, id, la
 };
 geodash.layers.init_featurelayer_wmts = function($scope, live, map_config, id, layerConfig)
 {
-  //https://github.com/Leaflet/Leaflet/blob/master/src/layer/tile/TileLayer.WMS.js
   var w = layerConfig.wmts;
   if(extract("auth", layerConfig, "") == "basic")
   {

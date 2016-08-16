@@ -27,7 +27,6 @@ geodash.controllers.GeoDashControllerModal = function(
   };
 
   $scope.pop = function(){
-    /*$scope.$apply(function () { });*/
     var ret = $scope.stack.list.shift();
     $scope.stack.backtrace.shift();
     if($scope.stack.list.length >= 2)
@@ -53,7 +52,7 @@ geodash.controllers.GeoDashControllerModal = function(
         // Already cleared in $scope.go_back
         $.each($scope.stack.head, function(key, value){ $scope[key] = value;});
       }
-      else // if(ret.prev == "geodash-modal-edit-field")
+      else
       {
         $("#"+ret.modal).modal('hide');
         $("#"+ret.prev).modal({'backdrop': 'static','keyboard':false});
@@ -138,7 +137,6 @@ geodash.controllers.GeoDashControllerModal = function(
     $scope.stack.list = [x].concat($scope.stack.list);
     $scope.stack.backtrace = [x].concat(backtrace || $scope.stack.backtrace);
     $scope.stack.head = $scope.stack.list[0];
-    //$scope.stack.prev = $scope.stack.list.length >= 2 ? $scope.stack.list[1] : undefined;
     if($scope.stack.list.length >= 2)
     {
       $scope.stack.prev = $scope.stack.list[1];
@@ -149,27 +147,6 @@ geodash.controllers.GeoDashControllerModal = function(
     }
     $.each($scope.stack.head, function(key, value){ $scope[key] = value; });
   };
-
-  /*
-  $scope.getValueForField = function(path_flat)
-  {
-    //workspace_flat | extract : object_field_id_flat
-    return $scope.stack.head.workspace_flat[path_flat];
-  };
-  $scope.getObject = function(objectIndex)
-  {
-    var workspace = $scope[$scope.config.workspace.workspace];
-    var keyChain = $scope.field.split(".");
-    keyChain.push(objectIndex);
-    return extract(keyChain, workspace, undefined);
-  };
-
-  $scope.getSchema = function()
-  {
-    var schema = $scope[$scope.config.schema.schema];
-    var keyChain = $scope.field.split(".");
-    return extract(keyChain, schema, undefined);
-  };*/
 
   $scope.go_back = function()
   {
@@ -268,7 +245,7 @@ geodash.controllers.GeoDashControllerModal = function(
     var workspace_flat = $scope.workspace_flat;
     $scope.clear();
     $timeout(function(){
-      // With Timeout, we're sure the angular tempalte has been reset
+      // By using $timeout, we're sure the template was reset (after we called $scope.clear)
       var ret = $scope.stack.list.shift();
       $scope.stack.backtrace.shift();
       if($scope.stack.list.length >= 2)
@@ -308,10 +285,8 @@ geodash.controllers.GeoDashControllerModal = function(
       }
       else
       {
-        // Save to Editor
+        // Save to GeoDash Server Editor
         var targetScope = geodash.api.getScope("geodash-sidebar-right");
-        //targetScope.workspace = targetScope.stack.head.workspace = workspace;
-        //targetScope.workspace_flat = targetScope.stack.head.workspace_flat = workspace_flat;
         targetScope.workspace = workspace;
         targetScope.workspace_flat = workspace_flat;
         $("#"+ret.modal).modal('hide');
@@ -359,16 +334,7 @@ geodash.controllers.GeoDashControllerModal = function(
     var label = "Cancel";
     if(angular.isDefined($scope.stack.head) && $scope.stack.backtrace.length > 1)
     {
-      /*var keyChain = $scope.stack.head.schemapath_array.concat(["type"]);
-      if(extract(keyChain, $scope.stack.head.schema) == "objectarray")
-      {
-        var x = $scope.stack.prev;
-        var f = extract(x.basepath_array, $scope.stack.head.schema);
-        var t = extract((x.schemapath_array || x.basepath_array), $scope.stack.head.schema);
-        label = "Back to "+(extract("schema.verbose_plural", f) || extract("label", f));
-      }*/
       var x = $scope.stack.backtrace[1];
-      //var f = extract(x.basepath_array, $scope.stack.head.schema);
       var t = extract((x.schemapath_array || x.basepath_array), x.schema);
       if(t.type == "objectarray" && angular.isNumber($scope.stack.head.objectIndex))
       {
