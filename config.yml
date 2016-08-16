@@ -89,6 +89,9 @@ resources:
   - name: leaflet.label-src.js
     path: "./lib/Leaflet.label/leaflet-master/leaflet.label-src.js"
     minified: "./lib/Leaflet.label/leaflet-master/leaflet.label.js"
+  - name: leaflet.TileLayer.WMTS.js
+    path: "./lib/leaflet.TileLayer.WMTS/{{ version }}/leaflet-tilelayer-wmts-src.js"
+    minified: "./lib/leaflet.TileLayer.WMTS/{{ version }}/leaflet-tilelayer-wmts.js"
   - name: showdown.js
     path: "./lib/showdown/{{ version }}/showdown.js"
     minified: "./lib/showdown/{{ version }}/showdown.min.js"

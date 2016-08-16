@@ -152,20 +152,20 @@ var extract = function(keyChain, node, fallback)
   {
     keyChain = keyChain.split(".");
   }
-	var obj = undefined;
-	if(keyChain.length==0)
-	{
+  var obj = undefined;
+  if(keyChain.length==0)
+  {
     if(node != undefined && node != null)
-		{
+    {
       obj = node;
     }
     else
     {
       obj = fallback;
     }
-	}
-	else
-	{
+  }
+  else
+  {
     var newKeyChain = keyChain.slice(1);
     if(newKeyChain.length == 0)
     {
@@ -190,7 +190,10 @@ var extract = function(keyChain, node, fallback)
     {
       if(Array.isArray(node))
       {
-        obj = extract(newKeyChain, node[keyChain[0]], fallback);
+        var index = angular.isString(keyChain[0]) ?
+          parseInt(keyChain[0], 10) :
+          keyChain[0];
+        obj = extract(newKeyChain, node[index], fallback);
       }
       else
       {

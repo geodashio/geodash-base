@@ -7,7 +7,7 @@ overlays:
   description: "Static Overlays available."
   schema:
     verbose_singular: Static Overlay
-    verbose_plurl: Static Overlays
+    verbose_plural: Static Overlays
     fields:
       - id: id
         type: text

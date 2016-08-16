@@ -137,7 +137,7 @@ geodash.init.listeners = function()
   });
 };
 
-geodash.init.typeahead = function($element)
+geodash.init.typeahead = function($element, featurelayers, baselayers)
 {
   $('.typeahead', $element).each(function(){
     var s = $(this);
@@ -155,14 +155,16 @@ geodash.init.typeahead = function($element)
       if(initialData == "layers")
       {
         bloodhoundData = [];
-        var featurelayers = angular.element("#geodash-main").scope()["map_config"]["featurelayers"];
+        featurelayers = featurelayers || geodash.api.listFeatureLayers();
+        //angular.element("#geodash-main").scope()["map_config"]["featurelayers"];
         if(featurelayers != undefined)
         {
           bloodhoundData = bloodhoundData.concat($.map(featurelayers, function(x, i){
             return {'id': x.id, 'text': x.id};
           }));
         }
-        var baselayers = angular.element("#geodash-main").scope()["map_config"]["baselayers"];
+        baselayers = baselayers || geodash.api.listBaseLayers();
+        //angular.element("#geodash-main").scope()["map_config"]["baselayers"];
         if(baselayers != undefined)
         {
           bloodhoundData = bloodhoundData.concat($.map(baselayers, function(x, i){
@@ -172,9 +174,13 @@ geodash.init.typeahead = function($element)
       }
       else if(initialData == "featurelayers")
       {
-        bloodhoundData = [];
-        var featurelayers = angular.element("#geodash-main").scope()["map_config"]["featurelayers"];
+        featurelayers = featurelayers || geodash.api.listFeatureLayers();
         bloodhoundData = $.map(featurelayers, function(fl, id){ return {'id': id, 'text': id}; });
+      }
+      else if(initialData == "baselayers")
+      {
+        baselayers = baselayers || geodash.api.listBaseLayers();
+        bloodhoundData = $.map(baselayers, function(bl, id){ return {'id': id, 'text': id}; });
       }
       else
       {
@@ -276,6 +282,10 @@ geodash.init.typeahead = function($element)
   });
 
 }
+geodash.api.parseTrue = function(value)
+{
+  return ['on', 'true', 't', '1', 1, true].indexOf(value) != -1;
+};
 geodash.api.getOption = function(options, name)
 {
   if(options != undefined && options != null)
@@ -327,6 +337,11 @@ geodash.api.getLayer = function(id, layers)
   }
   return layer;
 };
+geodash.api.listBaseLayers = function(options)
+{
+  var config = geodash.api.getDashboardConfig(options);
+  return extract("baselayers", config, []);
+};
 geodash.api.getBaseLayer = function(id, options)
 {
   var config = geodash.api.getDashboardConfig(options);
@@ -336,6 +351,11 @@ geodash.api.hasBaseLayer = function(id, options)
 {
   var config = geodash.api.getDashboardConfig(options);
   return geodash.api.hasLayer(id, config.baselayers);
+};
+geodash.api.listFeatureLayers = function(options)
+{
+  var config = geodash.api.getDashboardConfig(options);
+  return extract("featurelayers", config, []);
 };
 geodash.api.getFeatureLayer = function(id, options)
 {
@@ -741,7 +761,10 @@ geodash.listeners.showModal = function(event, args)
     modal_scope.$apply(function () {
         // Update Scope
         //modal_scope = $.extend(modal_scope, modal_scope_new);
-        $.each(modal_scope_new, function(key, value){ modal_scope[key] = value; });
+        //$.each(modal_scope_new, function(key, value){ modal_scope[key] = value; });
+        /////////////////
+        modal_scope.push(modal_scope_new);// Pushes New Scope to Modal's Stack
+        /////////////////
         setTimeout(function(){
           // Update Modal Tab Selection
           // See https://github.com/angular-ui/bootstrap/issues/1741
@@ -783,7 +806,10 @@ geodash.listeners.showModal = function(event, args)
           // Initalize Tooltips
           $('[data-toggle="tooltip"]', modalElement).tooltip();
           //Initialize Typeahead
-          geodash.init.typeahead(modalElement);
+          geodash.init.typeahead(
+            modalElement,
+            modal_scope.featurelayers,
+            modal_scope.baselayers);
           // Toggle Modal
           $("#"+id).modal(modalOptions);
           $("#"+id).modal('toggle');

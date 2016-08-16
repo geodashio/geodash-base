@@ -21,7 +21,7 @@ geodash.filters["md2html"] = function()
 
       // If one enclosing paragraph element, then flatten it.
       var matches = html.match(new RegExp("^<p(.*?)>(.*?)</p>", "gi"));
-      if(angular.isDefined(matches) && matches.length == 1)  // If only 1 match
+      if(Array.isArray(matches) && matches.length == 1)  // If only 1 match
       {
         if(matches[0] == html) // Fully enclosing
         {

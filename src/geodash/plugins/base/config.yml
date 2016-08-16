@@ -1,23 +1,26 @@
 ---
 controllers:
-  - controller_base.js
+  - GeoDashControllerBase.js
+  - GeoDashControllerModal.js
 directives:
   - svg.js
   - onLinkDone.js
   - onRepeatDone.js
-  - geodashModalDashboardConfig.js
-  - tab.js
   - geodashBtnClose.js
   - geodashBtnInfo.js
   - geodashBtn.js
+  - geodashLabel.js
+  - geodashTab.js
+  - geodashTabs.js
 enumerations:
   - dates.js
 templates:
-  - geodash_modal_dashboard_config.tpl.html
   - geodash_tab.tpl.html
+  - geodash_tabs.tpl.html
   - geodash_btn_close.tpl.html
   - geodash_btn_info.tpl.html
   - geodash_btn.tpl.html
+  - geodash_label.tpl.html
 filters:
   - default.js
   - md2html.js
@@ -38,6 +41,7 @@ filters:
   - common/default_if_undefined.js
   - common/default_if_undefined_or_blank.js
   - common/extract.js
+  - common/extractTest.js
   - common/inArray.js
   - common/not.js
   - common/prepend.js
@@ -82,3 +86,22 @@ schemas:
   - controls.yml
   - view.yml
   - pages.yml
+modals:
+  - name: dashboard_config
+    ui:
+      mainClass: ""
+      tabs:
+        - target: modal-dashboard-config-projects
+          label: Projects
+        - target: modal-dashboard-config-plugins
+          label: Plugins
+        - target: modal-dashboard-config-directives
+          label: Directives
+        - target: modal-dashboard-config-templates
+          label: Templates
+        - target: modal-dashboard-config-filters
+          label: Filters
+        - target: modal-dashboard-config-yaml
+          label: YAML
+        - target: modal-dashboard-config-json
+          label: JSON

@@ -19,7 +19,7 @@ geodash.init_controller = function(that, app, controller)
       'controllerName': controllerName,
       'controller': (controller || geodash.controllers.controller_base)
     });
-    app.controller(controllerName, controller || geodash.controllers.controller_base);
+    app.controller(controllerName, controller || geodash.controllers.GeoDashControllerBase);
   }
 };
 

@@ -6,6 +6,7 @@ view:
     placeholder: osm
     required: true
     description: "The default base layer shown on page load."
+    source: baselayers
   latitude:
     order: 0
     type: int

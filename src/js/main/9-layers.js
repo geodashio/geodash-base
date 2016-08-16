@@ -3,9 +3,13 @@ geodash.layers = {};
 geodash.layers.aggregate_fields = function(featureLayer)
 {
   var fields = [];
-  for(var i = 0; i < featureLayer.popup.panes.length; i++)
+  var panes = extract("popup.panes", featureLayer, undefined);
+  if(panes != undefined)
   {
-    fields = fields.concat(featureLayer.popup.panes[i].fields);
+    for(var i = 0; i < panes.length; i++)
+    {
+      fields = fields.concat(panes[i].fields);
+    }
   }
   return fields;
 };
@@ -14,11 +18,45 @@ geodash.layers.init_baselayers = function(map, baselayers)
   var layers = {};
   for(var i = 0; i < baselayers.length; i++)
   {
-      var tl = baselayers[i];
+      var bl = baselayers[i];
+      var type = extract("source.type", bl, 'tile');
+      var attribution = extract("source.attribution", bl, undefined);
+      var url = undefined;
+      if(type.toLowerCase() == "mapbox")
+      {
+        var mb_layers = extract("source.mapbox.layers", bl, undefined);
+        var mb_access_token = extract("source.mapbox.access_token", bl, undefined);
+        if(mb_layers == undefined || mb_access_token == undefined)
+        {
+          console.log("MapBox Layers missing config.", bl);
+        }
+        else
+        {
+          url = "http://{s}.tiles.mapbox.com/v4/"+mb_layers+"/{z}/{x}/{y}.png?access_token="+mb_access_token;
+        }
+      }
+      else if(type.toLowerCase() == "gwc")
+      {
+        var gwc_url = extract("source.gwc.url", bl, undefined);
+        var gwc_layers = extract("source.gwc.layers", bl, undefined);
+        if(gwc_url == undefined || gwc_layers == undefined)
+        {
+          console.log("GWC Layers missing config.", bl);
+        }
+        else
+        {
+          url = gwc_url+(gwc_url.endsWith("/")?'':'/')+"service/tms/1.0.0/"+gwc_layers+"@EPSG:900913@png/{z}/{x}/{y}.png";
+        }
+      }
+      else if(type.toLowerCase() in ["tile", "tiles"])
+      {
+        url = extract("source.tile.url", bl, undefined);
+      }
+      url = url || extract("source.url", bl, undefined);
       try{
-        layers[tl.id] = L.tileLayer(tl.source.url, {
-            id: tl.id,
-            attribution: tl.source.attribution
+        layers[bl.id] = L.tileLayer(url, {
+            id: bl.id,
+            attribution: attribution
         });
       }catch(err){console.log("Could not add baselayer "+i);}
   }
@@ -43,18 +81,108 @@ geodash.layers.init_featurelayer_wms = function($scope, live, map_config, id, la
 {
   //https://github.com/Leaflet/Leaflet/blob/master/src/layer/tile/TileLayer.WMS.js
   var w = layerConfig.wms;
-  var fl = L.tileLayer.wms(w.url, {
-    renderOrder: $.inArray(id, map_config.renderlayers),
-    buffer: w.buffer || 0,
-    version: w.version || "1.1.1",
-    layers: (Array.isArray(w.layers) ? w.layers.join(",") : w.layers),
-    styles: w.styles ? w.styles.join(",") : '',
-    format: w.format || 'image/png',
-    transparent: angular.isDefined(w.transparent) ? w.transparent : true,
-    attribution: layerConfig.source.attribution
-  });
-  live["featurelayers"][id] = fl;
-  geodash.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
+  if(extract("auth", layerConfig, "") == "basic")
+  {
+    //http://geonode.wfp.org/geoserver/geonode/wms
+    var auth_url = w.url + (w.url.indexOf("?") != -1 ? '&' : '?') + "SERVICE=WMS&REQUEST=GetCapabilities"
+    //$.ajax({url: auth_url, dataType: "text/xml",success: function(response){}});
+    $.ajax({
+      url: auth_url,
+      type: "GET",
+      dataType: "jsonp",
+      jsonp: "callback",
+      beforeSend: function(xhr){
+        xhr.setRequestHeader("Authorization", "Basic "+btoa("null:null"));
+        console.log(xhr);
+      },
+      error: function(){},
+      success: function(){},
+      complete: function(response){
+        var fl = L.tileLayer.wms(w.url, {
+          renderOrder: $.inArray(id, map_config.renderlayers),
+          buffer: w.buffer || 0,
+          version: w.version || "1.1.1",
+          layers: (Array.isArray(w.layers) ? w.layers.join(",") : w.layers),
+          styles: angular.isDefined(w.styles) ? w.styles.join(",") : '',
+          format: w.format || 'image/png',
+          transparent: angular.isDefined(w.transparent) ? w.transparent : true,
+          attribution: extract("source.attribution", layerConfig, undefined)
+        });
+        live["featurelayers"][id] = fl;
+        geodash.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
+      }
+    });
+  }
+  else
+  {
+    var fl = L.tileLayer.wms(w.url, {
+      renderOrder: $.inArray(id, map_config.renderlayers),
+      buffer: w.buffer || 0,
+      version: w.version || "1.1.1",
+      layers: (Array.isArray(w.layers) ? w.layers.join(",") : w.layers),
+      styles: angular.isDefined(w.styles) ? w.styles.join(",") : '',
+      format: w.format || 'image/png',
+      transparent: angular.isDefined(w.transparent) ? w.transparent : true,
+      attribution: extract("source.attribution", layerConfig, undefined)
+    });
+    live["featurelayers"][id] = fl;
+    geodash.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
+  }
+};
+geodash.layers.init_featurelayer_wmts = function($scope, live, map_config, id, layerConfig)
+{
+  //https://github.com/Leaflet/Leaflet/blob/master/src/layer/tile/TileLayer.WMS.js
+  var w = layerConfig.wmts;
+  if(extract("auth", layerConfig, "") == "basic")
+  {
+    var auth_url = w.url + (w.url.indexOf("?") != -1 ? '&' : '?') + "SERVICE=WMS&REQUEST=GetCapabilities"
+    $.ajax({
+      url: auth_url,
+      type: "GET",
+      dataType: "jsonp",
+      jsonp: "callback",
+      beforeSend: function(xhr){
+        xhr.setRequestHeader("Authorization", "Basic "+btoa("null:null"));
+      },
+      error: function(){},
+      success: function(){},
+      complete: function(response){
+        var fl = L.tileLayer.wmts(w.url, {
+          renderOrder: $.inArray(id, map_config.renderlayers),
+          version: w.version || "1.0.0",
+          layer: (Array.isArray(w.layers) ? w.layers.join(",") : w.layers),
+          styles: angular.isDefined(w.styles) ? w.styles.join(",") : '',
+          format: w.format || 'image/png',
+          transparent: angular.isDefined(w.transparent) ? w.transparent : true,
+          attribution: extract("source.attribution", layerConfig, undefined),
+          tilematrixSet: "EPSG:3857",
+          minZoom: extract("view.minZoom", layerConfig, 0),
+          maxZoom: extract("view.maxZoom", layerConfig, 18),
+          maxNativeZoom: extract("source.maxZoom", layerConfig, null)
+        });
+        live["featurelayers"][id] = fl;
+        geodash.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
+      }
+    });
+  }
+  else
+  {
+    var fl = L.tileLayer.wmts(w.url, {
+      renderOrder: $.inArray(id, map_config.renderlayers),
+      version: w.version || "1.0.0",
+      layer: (Array.isArray(w.layers) ? w.layers.join(",") : w.layers),
+      styles: angular.isDefined(w.styles) ? w.styles.join(",") : '',
+      format: w.format || 'image/png',
+      transparent: angular.isDefined(w.transparent) ? w.transparent : true,
+      attribution: extract("source.attribution", layerConfig, undefined),
+      tilematrixSet: "EPSG:3857",
+      minZoom: extract("view.minZoom", layerConfig, 0),
+      maxZoom: extract("view.maxZoom", layerConfig, 18),
+      maxNativeZoom: extract("source.maxZoom", layerConfig, null)
+    });
+    live["featurelayers"][id] = fl;
+    geodash.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
+  }
 };
 geodash.layers.init_featurelayer_geojson = function($scope, live, map_config, id, layerConfig)
 {
@@ -118,6 +246,10 @@ geodash.layers.init_featurelayer = function(id, layerConfig, $scope, live, map_c
     else if(layerConfig.type.toLowerCase() == "wms")
     {
       geodash.layers.init_featurelayer_wms($scope, live, map_config, id, layerConfig);
+    }
+    else if(layerConfig.type.toLowerCase() == "wmts")
+    {
+      geodash.layers.init_featurelayer_wmts($scope, live, map_config, id, layerConfig);
     }
   }
 };

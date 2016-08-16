@@ -9,27 +9,7 @@ geodash.codec.parseFeatures = function(response, fields_by_featuretype)
       var f = $(this).children();
       var typeName = f.prop("tagName").toLowerCase();
       var attributes = geodash.codec.parseAttributes(f, fields_by_featuretype[typeName]);
-      var shape = f.find("geonode\\:shape");
-      var geom = undefined;
-      if(shape.find("gml\\:point").length > 0)
-      {
-        var coords = shape.find("gml\\:point").find("gml\\:coordinates").text().split(",");
-        geom = new L.LatLng(parseFloat(coords[1]), parseFloat(coords[0]));
-      }
-      else if(shape.find("gml\\:multilinestring").length > 0)
-      {
-        var coords = shape.find("gml\\:multilinestring")
-          .find("gml\\:linestringmember")
-          .find("gml\\:linestring")
-          .find("gml\\:coordinates")
-          .text().split(" ");
-        coords = $.map(coords, function(x, i){
-          var a = x.split(",");
-          return [[parseFloat(a[0]), parseFloat(a[1])]];
-        });
-        var geojson = [{"type": "LineString","coordinates": coords}];
-        geom = new L.GeoJSON(geojson, {});
-      }
+      var geom = geodash.codec.parseGeometry(f);
       var newFeature = {
         'featuretype': typeName,
         'attributes': attributes,
@@ -42,25 +22,77 @@ geodash.codec.parseFeatures = function(response, fields_by_featuretype)
 geodash.codec.parseAttributes  = function(element, fields)
 {
   var attributes = {};
-  for(var k = 0; k < fields.length; k++)
+  if(fields != undefined)
   {
-    var field = fields[k];
-    var attributeName = field['output'] || field['attribute'];
-    attributes[attributeName] = undefined;
-    var inputName = field['attribute'] || field['input'];
-    var inputNames = inputName != undefined ? [inputName] : field['inputs'];
-    if(inputNames!= undefined)
+    for(var k = 0; k < fields.length; k++)
     {
-      for(var l = 0; l < inputNames.length; l++)
+      var field = fields[k];
+      var attributeName = field['output'] || field['attribute'];
+      attributes[attributeName] = undefined;
+      var inputName = field['attribute'] || field['input'];
+      var inputNames = inputName != undefined ? [inputName] : field['inputs'];
+      if(inputNames!= undefined)
       {
-        var inputName = inputNames[l];
-        if(element.find("geonode\\:"+inputName).length > 0)
+        for(var l = 0; l < inputNames.length; l++)
         {
-          attributes[attributeName] = element.find("geonode\\:"+inputName).text();
-          break;
+          var inputName = inputNames[l];
+          if(element.find("geonode\\:"+inputName).length > 0)
+          {
+            attributes[attributeName] = element.find("geonode\\:"+inputName).text();
+            break;
+          }
         }
       }
     }
   }
   return attributes;
+};
+geodash.codec.parseGeometry = function(element)
+{
+  var geom = undefined;
+
+  var attribute = element.find("geonode\\:shape");
+  if(attribute.length == 0){ attribute = element.find("geonode\\:the_geom"); }
+
+  if(attribute.find("gml\\:point").length > 0)
+  {
+    var coords = attribute.find("gml\\:point").find("gml\\:coordinates").text().split(",");
+    geom = new L.LatLng(parseFloat(coords[1]), parseFloat(coords[0]));
+  }
+  else if(attribute.find("gml\\:multilinestring").length > 0)
+  {
+    var coords = attribute.find("gml\\:multilinestring")
+      .find("gml\\:linestringmember")
+      .find("gml\\:linestring")
+      .find("gml\\:coordinates")
+      .text().split(" ");
+    coords = $.map(coords, function(x, i){
+      var a = x.split(",");
+      return [[parseFloat(a[0]), parseFloat(a[1])]];
+    });
+    var geojson = [{"type": "LineString","coordinates": coords}];
+    geom = new L.GeoJSON(geojson, {});
+  }
+  else if(attribute.find("gml\\:multipolygon").length > 0)
+  {
+    var coords = attribute.find("gml\\:multipolygon")
+      .find("gml\\:polygonmember")
+      .find("gml\\:polygon")
+      .find("gml\\:outerboundaryis")
+      .find("gml\\:linearring")
+      .find("gml\\:coordinates")
+      .text().split(" ");
+    coords = $.map(coords, function(x, i){
+      var a = x.split(",");
+      return [[parseFloat(a[0]), parseFloat(a[1])]];
+    });
+    var ring = [coords];
+    var multipolygon = [ring];
+    var geojson = [{
+      "type": "MultiPolygon",
+      "coordinates": multipolygon
+    }];
+    geom = new L.GeoJSON(geojson, {});
+  }
+  return geom;
 };

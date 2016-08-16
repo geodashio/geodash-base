@@ -21,8 +21,8 @@ description:
 about:
   title:
     type: markdown
-    label: Title
-    placeholder: Title
+    label: About / Title
+    placeholder: title
     multiline: false
     required: true
     description: "The title for the about modal."

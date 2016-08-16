@@ -7,7 +7,7 @@ featurelayers:
   description: "Feature layers available."
   schema:
     verbose_singular: Feature Layer
-    verbose_plurl: Feature Layers
+    verbose_plural: Feature Layers
     fields:
       - id: id
         type: text
@@ -27,78 +27,158 @@ featurelayers:
         placeholder: description
         required: true
         description: "The description of your base layer."
-      - id: "source.name"
-        type: text
-        label: Source Name
-        placeholder: source name
-        required: true
-        description: "The name of the source of your feature layer."
-      - id: "source.attribution"
-        type: text
-        label: Source Attribution
-        placeholder: source attribution
-        required: true
-        description: "The attribution of the source of feature layer."
       - id: "legend.label"
         type: "text"
         label: "Legend Label"
         placeholder: "legend label"
         required: false
         description: "The label to use in the legend for this layer."
+      - id: "auth"
+        type: text
+        label: Authentication
+        placeholder: none, basic
+        required: false
+        description: "The type of authentication for this layer."
+        options:
+          - none
+          - basic
       - id: "type"
         type: text
         label: Type
-        placeholder: wms, geojson
+        placeholder: wms, wmts, geojson
         required: false
-        description: "The type of the feature layer (wms, geojson)."
+        description: "The type of the feature layer (wms, wmts, geojson)."
         options:
           - wms
+          - wmts
           - geojson
-      - id: "wms.layers"
-        type: text
-        label: Layers
-        placeholder: wms, geojson
-        required: false
-        description: "The wms layers of the feature layer."
+      - id: view.minZoom
+        type: int
+        label: View / Minimum Zoom
+        placeholder: 0
+        minValue: 0
+        maxValue: 18
+        description: "The maximum a user can zoom out."
         when:
           field: type
           values:
             - wms
-      - id: "wms.url"
+            - wmts
+      - id: view.maxZoom
+        type: int
+        label: View / Maximum Zoom
+        placeholder:  18
+        minValue: 0
+        maxValue: 18
+        description: "The maximum a user can zoom in."
+        when:
+          field: type
+          values:
+            - wms
+            - wmts
+      - id: source
+        type: object
+        label: Source
+        placeholder: "source"
+        required: false
+        description: "Source configuration."
+        schema:
+          verbose_singular: Source
+          fields:
+            - id: name
+              type: text
+              label: Source / Name
+              placeholder: source name
+              required: true
+              description: "The name of the source of your feature layer."
+            - id: attribution
+              type: text
+              label: Source / Attribution
+              placeholder: source attribution
+              required: true
+              description: "The attribution of the source of feature layer."
+            - id: maxZoom
+              type: int
+              label: Source / Maximum Zoom
+              placeholder: 18
+              minValue: 0
+              maxValue: 18
+              description: "The maximum zoom level provided by the source."
+      - id: wms
+        type: object
+        label: WMS
+        placeholder: "wms"
+        required: false
+        description: "WMS configuration."
+        when:
+          field: type
+          values:
+            - wms
+        schema:
+          verbose_singular: WMS
+          fields:
+            - id: layers
+              type: text
+              label: WMS Layers
+              placeholder: layers
+              required: false
+              description: "The wms layers of the feature layer."
+            - id: url
+              type: text
+              label: WMS URL
+              placeholder: "http://geonode.wfp.org/geoserver/geonode/wms"
+              required: false
+              description: "The url of the WMS server."
+      - id: "wmts.layers"
         type: text
-        label: WMS URL
+        label: WMTS Layers
+        placeholder: layers
+        required: false
+        description: "The wmts layers of the feature layer."
+        when:
+          field: type
+          values:
+            - wmts
+      - id: "wmts.url"
+        type: text
+        label: WMTS URL
         placeholder: "http://geonode.wfp.org/geoserver/geonode/wms"
         required: false
-        description: "The url of the WMS server."
+        description: "The url of the WMTS server."
         when:
           field: type
           values:
-            - wms
-      - id: "wfs.version"
-        type: text
-        label: WFS URL
-        placeholder: "1.0.0"
+            - wmts
+      - id: wfs
+        type: object
+        label: WFS
+        placeholder: "wfs"
         required: false
-        description: "The version of the WFS server."
-        options:
-          - "1.0.0"
-          - "1.1.0"
-          - "2.0"
-          - "2.0.2"
+        description: "WFS configuration."
         when:
           field: type
           values:
             - wms
-      - id: "wfs.url"
-        type: text
-        label: WFS URL
-        placeholder: "http://geonode.wfp.org/cors/geoserver/wfs"
-        required: false
-        description: "The url of the WFS server."
-        when:
-          field: type
-          values:
-            - wms
+        schema:
+          verbose_singular: WFS
+          fields:
+            - id: version
+              type: text
+              label: WFS Version
+              placeholder: "1.0.0"
+              required: false
+              description: "The version of the WFS server."
+              options:
+                - "1.0.0"
+                - "1.1.0"
+                - "2.0"
+                - "2.0.2"
+            - id: url
+              type: text
+              label: WFS URL
+              placeholder: "http://geonode.wfp.org/cors/geoserver/wfs"
+              required: false
+              description: "The url of the WFS server."
       - id: "geojson.url"
         type: text
         label: GeoJSON URL
@@ -109,3 +189,106 @@ featurelayers:
           field: type
           values:
             - geojson
+      - id: popup
+        type: object
+        label: Popup
+        placeholder: "popup"
+        required: false
+        description: "Popup displayed when clicked on map."
+        schema:
+          verbose_singular: Popup
+          fields:
+          - id: title
+            type: text
+            label: Popup Title
+            placeholder: "popup title"
+            required: false
+            description: "The title of the layer's popup.  Can use angular variables and filters."
+          - id: maxWidth
+            type: text
+            label: Popup Maximum Width
+            placeholder: "550"
+            required: false
+            description: "The maximum width of the layer's popup."
+          - id: panes
+            type: objectarray
+            label: Panes
+            placeholder: "Panes"
+            required: false
+            description: "Panes"
+            schema:
+              verbose_singular: Pane
+              verbose_plural: Panes
+              fields:
+                - id: id
+                  type: text
+                  label: Pane ID
+                  placeholder: "id"
+                  required: true
+                  description: "The id of the pane."
+                - id: "tab.label"
+                  type: text
+                  label: Tab Label
+                  placeholder: "tab label"
+                  required: true
+                  description: "The label of the pane's tab."
+                - id: fields
+                  type: objectarray
+                  label: Fields
+                  placeholder: "Fields"
+                  required: false
+                  description: "Fields"
+                  schema:
+                    verbose_singular: Field
+                    verbose_plural: Fields
+                    fields:
+                      - id: type
+                        type: text
+                        label: Type
+                        placeholder: type
+                        required: false
+                        description: "Type (text, link)."
+                        options:
+                          - text
+                          - template
+                          - link
+                          - date
+                      - id: attribute
+                        type: text
+                        label: Field Attribute
+                        placeholder: Field Attribute
+                        required: false
+                        description: "The attribute name (use when input & output are the same)."
+                      - id: inputs
+                        type: stringarray
+                        label: Inputs
+                        placeholder: "Input arributes"
+                        required: true
+                        description: "Will coalesce when provided with multiple attribute names."
+                      - id: value
+                        type: template
+                        label: Value
+                        placeholder: "Value (eg., {{ feature.geometry.lat | number :4 }}, {{ feature.geometry.lng | number: 4}})"
+                        required: false
+                        description: "Custom value to show."
+                      - id: url
+                        type: template
+                        label: URL
+                        placeholder: URL
+                        required: false
+                        description: "When you want to hyperlink the value field."
+                      - id: label
+                        type: template
+                        label: Field Label
+                        placeholder: Field label
+                        required: false
+                        description: "The label of the field."
+                      - id: when
+                        type: text
+                        label: Field When
+                        placeholder: Field When
+                        required: false
+                        description: "When to display the field (always, defined, etc.)."
+                        options:
+                          - always
+                          - defined
