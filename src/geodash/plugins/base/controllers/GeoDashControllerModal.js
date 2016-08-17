@@ -4,10 +4,9 @@ geodash.controllers.GeoDashControllerModal = function(
   angular.extend(this, $controller('GeoDashControllerBase', {$element: $element, $scope: $scope}));
 
   $scope.stack = {
-    'head': undefined, //list[0]
-    'prev': undefined, //list[1]
-    'list': [],
-    'backtrace': [] // Full list including other moadls stacks when necessary
+    'head': undefined, //backtrace[0]
+    'prev': undefined, //backtrace[1]
+    'backtrace': [] // Full list to include states from other modals
   };
 
   $scope.showModal = function(x)
@@ -26,126 +25,229 @@ geodash.controllers.GeoDashControllerModal = function(
     }
   };
 
-  $scope.pop = function(){
-    var ret = $scope.stack.list.shift();
-    $scope.stack.backtrace.shift();
-    if($scope.stack.list.length >= 2)
+  $scope.pop = function()
+  {
+    var removed = $scope.stack.backtrace.shift();
+    $scope.update_stack();
+    $scope.update_main(removed);
+    $scope.update_ui(removed, $scope.stack.backtrace);
+  };
+  $scope.update_stack = function(backtrace)
+  {
+    if(angular.isDefined(backtrace))
     {
-      $scope.stack.head = $scope.stack.list[0];
-      $scope.stack.prev = $scope.stack.list[1];
+      $scope.stack.backtrace = backtrace;
     }
-    else if($scope.stack.list.length == 1)
+    if($scope.stack.backtrace.length >= 2)
     {
-      $scope.stack.head = $scope.stack.list[0];
-      $scope.stack.prev = angular.isDefined($scope.stack.head.prev) ? geodash.api.getScope($scope.stack.head.prev).stack.head : undefined;
+      $scope.stack.head = $scope.stack.backtrace[0];
+      $scope.stack.prev = $scope.stack.backtrace[1];
+    }
+    else if($scope.stack.backtrace.length == 1)
+    {
+      $scope.stack.head = $scope.stack.backtrace[0];
+      $scope.stack.prev = undefined;
     }
     else
     {
       $scope.stack.head = undefined;
       $scope.stack.prev = undefined;
     }
-    $.each(ret, function(key, value){ $scope[key] = undefined; }); // Clean
-    if(angular.isString(ret.prev))
+  };
+  $scope.update_main = function(removed)
+  {
+    if(angular.isDefined($scope.stack.head))
     {
-      if(ret.prev == ret.modal)
+      if($scope.stack.head.modal == removed.modal)
       {
-        // Already cleared in $scope.go_back
         $.each($scope.stack.head, function(key, value){ $scope[key] = value;});
+      }
+    }
+  };
+  $scope.update_breadcrumbs = function()
+  {
+    var breadcrumbs = [];
+    if(angular.isDefined(extract('stack.backtrace', $scope)))
+    {
+      for(var i = $scope.stack.backtrace.length - 1; i >= 0; i--)
+      {
+        var x = $scope.stack.backtrace[i];
+        if(angular.isDefined(x.objectIndex))
+        {
+          var obj = extract(x.path_array, x.workspace);
+          var content = extract('title', obj) || extract('id', obj) || x.objectIndex;
+          var link = "#";
+          var bc = {'content': content, 'link': link};
+          breadcrumbs.push(bc);
+        }
+        else
+        {
+          var keyChain = x.schemapath_array || x.basepath_array;
+          if(angular.isDefined(keyChain))
+          {
+            var f = extract(keyChain, x.schema);
+            if(angular.isDefined(f))
+            {
+              var t = extract("type", f);
+              var content = undefined;
+              var link = "#";
+              if(t == "object")
+              {
+                content = extract("schema.verbose_singular", f) || extract("label", f);
+              }
+              else if(t == "objectarray" || t == "stringarray" || t == "textarray" || t == "templatearray")
+              {
+                content = extract("schema.verbose_plural", f) || extract("label", f);
+              }
+              else
+              {
+                content = extract("label", f);
+              }
+              var bc = {'content': content, 'link': link};
+              breadcrumbs.push(bc);
+            }
+          }
+        }
+      }
+      $scope.breadcrumbs = breadcrumbs;
+    }
+    return breadcrumbs;
+  };
+  $scope.update_ui = function(removed, backtrace)
+  {
+    if(angular.isDefined($scope.stack.head))
+    {
+      if($scope.stack.head.modal == removed.modal)
+      {
+        $scope.update_breadcrumbs();
       }
       else
       {
-        $("#"+ret.modal).modal('hide');
-        $("#"+ret.prev).modal({'backdrop': 'static','keyboard':false});
-        var retScope = geodash.api.getScope(ret.prev);
-        retScope.clear();
+        var oldModal = removed.modal;
+        var newModal = $scope.stack.head.modal;
+        $("#"+oldModal).modal('hide');
+        $("#"+newModal).modal({'backdrop': 'static', 'keyboard':false});
+        //var newScope = geodash.api.getScope(newModal);
+        // newScope.clear(); Should have already happened in clear_all
         $timeout(function(){
-          $.each(retScope.stack.head, function(key, value){ retScope[key] = value;});
-          $("#"+ret.prev).modal('show');
+          var newScope = geodash.api.getScope(newModal);
+          newScope.update_stack(backtrace);
+          $.each(newScope.stack.head, function(key, value){ newScope[key] = value;});
+          newScope.update_breadcrumbs();
+          $("#"+newModal).modal('show');
+          $timeout(function(){ $('[data-toggle="tooltip"]', $("#"+newModal)).tooltip(); },0);
         },0);
       }
     }
     else
     {
-      $("#"+ret.modal).modal('hide');
+      $("#"+removed.modal).modal('hide');
     }
   };
 
   $scope.clear = function()
   {
-    if(angular.isDefined($scope.stack.head))
+    $scope.clear_all(1);
+  };
+  $scope.clear_all = function(count)
+  {
+    var backtrace = $scope.stack.backtrace;
+    if(backtrace.length > 0)
     {
-      $.each($scope.stack.head, function(key, value){ $scope[key] = undefined; });
       var clear_array = [
         "workspace", "workspace_flat",
         "schema", "schema_flat",
         "basepath", "basepath_flat", "basepath_array",
         "schemapath", "schemapath_flat", "schemapath_array",
         "objectIndex",
-        "path", "path_flat", "path_array"];
-      $.each(clear_array, function(index, value){ $scope[value] = undefined; });
+        "path", "path_flat", "path_array",
+        "breadcrumbs"];
+      var scopes = {};
+      var s = undefined;
+      for(var i = 0; i < count && i < backtrace.length; i++)
+      {
+        var x = backtrace[i];
+        if(angular.isUndefined(s))
+        {
+          var m = extract('modal', x);
+          s = angular.isDefined(m) ? geodash.api.getScope(m) : $scope;
+        }
+        $.each(x, function(key, value){ s[key] = undefined; });
+        $.each(clear_array, function(index, value){ s[value] = undefined; });
+      }
     }
   };
 
   $scope.push = function(x, backtrace)
   {
     $scope.clear(); // Clean Old Values
+    x = $scope.expand(x)
+    $scope.update_stack([x].concat(backtrace || $scope.stack.backtrace));
+    $.each($scope.stack.head, function(key, value){ $scope[key] = value; });
+    $scope.update_breadcrumbs();
+  };
 
-    if(angular.isDefined(x.schemapath))
+  $scope.expand = function(x)
+  {
+    if(angular.isDefined(x))
     {
-      x.schemapath_flat = x.schemapath.replace(new RegExp("\\.", "gi"), "__");
-      x.schemapath_array = x.schemapath.split(".");
-    }
-
-    if(angular.isDefined(x.basepath))
-    {
-      x.basepath_array = x.basepath.split(".");
       if(angular.isDefined(x.schemapath))
       {
-        x.object_fields = extract(x.schemapath_array.concat(["schema", "fields"]), x.schema, []);
+        x.schemapath_flat = x.schemapath.replace(new RegExp("\\.", "gi"), "__");
+        x.schemapath_array = x.schemapath.split(".");
       }
-      else
+
+      if(angular.isDefined(x.basepath))
       {
-        x.object_fields = extract(x.basepath_array.concat(["schema", "fields"]), x.schema, []);
+        x.basepath_array = x.basepath.split(".");
+        if(angular.isDefined(x.schemapath))
+        {
+          x.object_fields = extract(x.schemapath_array.concat(["schema", "fields"]), x.schema, []);
+        }
+        else
+        {
+          x.object_fields = extract(x.basepath_array.concat(["schema", "fields"]), x.schema, []);
+        }
+        if(angular.isDefined(x.objectIndex))
+        {
+          x.path = x.basepath + "." + x.objectIndex;
+          x.path_flat = x.path.replace(new RegExp("\\.", "gi"), "__");
+          x.path_array = x.basepath_array.concat([x.objectIndex]);
+        }
+        else
+        {
+          x.path = x.basepath;
+          x.path_flat = x.path.replace(new RegExp("\\.", "gi"), "__");
+          x.path_array = x.path.split(".");
+        }
       }
-      if(angular.isDefined(x.objectIndex))
+      else if(angular.isDefined(x.path))
       {
-        x.path = x.basepath + "." + x.objectIndex;
-        x.path_flat = x.path.replace(new RegExp("\\.", "gi"), "__");
-        x.path_array = x.basepath_array.concat([x.objectIndex]);
-      }
-      else
-      {
-        x.path = x.basepath;
         x.path_flat = x.path.replace(new RegExp("\\.", "gi"), "__");
         x.path_array = x.path.split(".");
       }
+      if(angular.isDefined(x.workspace))
+      {
+        x.workspace_flat = geodash.api.flatten(x.workspace);
+      }
+      if(angular.isDefined(x.schema))
+      {
+        x.schema_flat = geodash.api.flatten(x.schema);
+      }
     }
-    else if(angular.isDefined(x.path))
-    {
-      x.path_flat = x.path.replace(new RegExp("\\.", "gi"), "__");
-      x.path_array = x.path.split(".");
-    }
-    if(angular.isDefined(x.workspace))
-    {
-      x.workspace_flat = geodash.api.flatten(x.workspace);
-    }
-    if(angular.isDefined(x.schema))
-    {
-      x.schema_flat = geodash.api.flatten(x.schema);
-    }
+    return x;
+  };
 
-    $scope.stack.list = [x].concat($scope.stack.list);
-    $scope.stack.backtrace = [x].concat(backtrace || $scope.stack.backtrace);
-    $scope.stack.head = $scope.stack.list[0];
-    if($scope.stack.list.length >= 2)
-    {
-      $scope.stack.prev = $scope.stack.list[1];
-    }
-    else if($scope.stack.list.length == 1)
-    {
-      $scope.stack.prev = angular.isDefined($scope.stack.head.prev) ? geodash.api.getScope($scope.stack.head.prev).stack.head : undefined;
-    }
-    $.each($scope.stack.head, function(key, value){ $scope[key] = value; });
+  $scope.rollback = function(index)
+  {
+    var count = angular.isDefined(index) ? ($scope.stack.backtrace.length - index - 1) : 1;
+    $scope.clear_all(count);
+    $timeout(function(){
+      var removed = $scope.stack.backtrace[0];
+      $scope.update_stack($scope.stack.backtrace.slice(count));
+      $scope.update_main(removed);
+      $scope.update_ui(removed, $scope.stack.backtrace);
+    },0);
   };
 
   $scope.go_back = function()
@@ -185,6 +287,7 @@ geodash.controllers.GeoDashControllerModal = function(
       geodash.api.getScope(x.modal).push(x, $scope.stack.backtrace);
       $("#"+x.modal).modal({'backdrop': 'static','keyboard':false});
       $("#"+x.modal).modal('show');
+      $timeout(function(){ $('[data-toggle="tooltip"]', $("#"+x.modal)).tooltip(); },0);
     }
   };
 
@@ -243,53 +346,46 @@ geodash.controllers.GeoDashControllerModal = function(
   {
     var workspace = $scope.workspace;
     var workspace_flat = $scope.workspace_flat;
-    $scope.clear();
+    $scope.clear_all(2);
     $timeout(function(){
       // By using $timeout, we're sure the template was reset (after we called $scope.clear)
-      var ret = $scope.stack.list.shift();
-      $scope.stack.backtrace.shift();
-      if($scope.stack.list.length >= 2)
+      //var ret = $scope.stack.list.shift();
+      var saved = $scope.stack.backtrace.shift();
+      if($scope.stack.backtrace.length > 0)
       {
-        $scope.stack.head = $scope.stack.list[0];
-        $scope.stack.prev = $scope.stack.list[1];
-      }
-      else if($scope.stack.list.length == 1)
-      {
-        $scope.stack.head = $scope.stack.list[0];
-        $scope.stack.prev = angular.isDefined($scope.stack.head.prev) ? geodash.api.getScope($scope.stack.head.prev).stack.head : undefined;
-      }
-      else
-      {
-        $scope.stack.head = undefined;
-        $scope.stack.prev = undefined;
-      }
-      $.each(ret, function(key, value){ $scope[key] = undefined; }); // Clean
-
-      if(ret.prev == "geodash-modal-edit-object")
-      {
-        $.each($scope.stack.head, function(key, value){ $scope[key] = value;});
-        $scope.workspace = $scope.stack.head.workspace = workspace;
-        $scope.workspace_flat = $scope.stack.head.workspace_flat = workspace_flat;
-      }
-      else if(ret.prev == "geodash-modal-edit-field")
-      {
-        // Close Edit Object Modal
-        $("#"+ret.modal).modal('hide');
-        // Save Back to Edit Field Scope
-        var targetScope = geodash.api.getScope(ret.prev);
-        targetScope.workspace = targetScope.stack.head.workspace = workspace;
-        targetScope.workspace_flat = targetScope.stack.head.workspace_flat = workspace_flat;
-        // Open Edit Field Modal
-        $("#"+ret.prev).modal('show');
-        $timeout(function(){ $('[data-toggle="tooltip"]', $("#"+ret.prev)).tooltip(); },0);
+        var backtrace = $scope.stack.backtrace;
+        backtrace[0]['workspace'] = workspace;
+        backtrace[0]['workspace_flat'] = workspace_flat;
+        $scope.update_stack(backtrace);
+        if($scope.stack.head.modal == saved.modal)
+        {
+          $.each($scope.stack.head, function(key, value){ $scope[key] = value;});
+          $scope.workspace = $scope.stack.head.workspace = workspace;
+          $scope.workspace_flat = $scope.stack.head.workspace_flat = workspace_flat;
+          $scope.update_breadcrumbs();
+        }
+        else
+        {
+          var oldModal = saved.modal;
+          var newModal = $scope.stack.head.modal;
+          $("#"+oldModal).modal('hide');
+          $("#"+newModal).modal({'backdrop': 'static', 'keyboard':false});
+          $timeout(function(){
+            var newScope = geodash.api.getScope(newModal);
+            newScope.update_stack(backtrace);
+            $.each(newScope.stack.head, function(key, value){ newScope[key] = value;});
+            newScope.update_breadcrumbs();
+            $("#"+newModal).modal('show');
+            $timeout(function(){ $('[data-toggle="tooltip"]', $("#"+newModal)).tooltip(); },0);
+          },0);
+        }
       }
       else
       {
-        // Save to GeoDash Server Editor
         var targetScope = geodash.api.getScope("geodash-sidebar-right");
         targetScope.workspace = workspace;
         targetScope.workspace_flat = workspace_flat;
-        $("#"+ret.modal).modal('hide');
+        $("#"+saved.modal).modal('hide');
       }
     },0);
   };

@@ -235,15 +235,16 @@ geodash.layers.init_featurelayer = function(id, layerConfig, $scope, live, map_c
 {
   if(layerConfig.enabled == undefined || layerConfig.enabled == true)
   {
-    if(layerConfig.type.toLowerCase() == "geojson")
+    var t = extract("type", layerConfig, "").toLowerCase();
+    if(t == "geojson")
     {
       geodash.layers.init_featurelayer_geojson($scope, live, map_config, id, layerConfig);
     }
-    else if(layerConfig.type.toLowerCase() == "wms")
+    else if(t == "wms")
     {
       geodash.layers.init_featurelayer_wms($scope, live, map_config, id, layerConfig);
     }
-    else if(layerConfig.type.toLowerCase() == "wmts")
+    else if(t == "wmts")
     {
       geodash.layers.init_featurelayer_wmts($scope, live, map_config, id, layerConfig);
     }
