@@ -1,5 +1,20 @@
 geodash.codec = {};
 
+geodash.codec.formatArray = function(path, obj, fallback)
+{
+  var result = fallback || '';
+  var x = extract(path, obj);
+  if(Array.isArray(x))
+  {
+    result = x.join(",");
+  }
+  else if(angular.isString(x))
+  {
+    result = x;
+  }
+  return result;
+};
+
 geodash.codec.parseFeatures = function(response, fields_by_featuretype)
 {
   var features = [];

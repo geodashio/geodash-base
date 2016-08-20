@@ -19,3 +19,4 @@ legendlayers:
   placeholder: "Legend Layers"
   required: false
   description: "The layers in-order to show in the legend."
+  source: layers

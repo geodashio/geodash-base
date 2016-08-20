@@ -3,6 +3,8 @@ geodash.controllers.GeoDashControllerModal = function(
 {
   angular.extend(this, $controller('GeoDashControllerBase', {$element: $element, $scope: $scope}));
 
+  $scope.showOptions = geodash.ui.showOptions;
+
   $scope.stack = {
     'head': undefined, //backtrace[0]
     'prev': undefined, //backtrace[1]
@@ -120,6 +122,14 @@ geodash.controllers.GeoDashControllerModal = function(
       if($scope.stack.head.modal == removed.modal)
       {
         $scope.update_breadcrumbs();
+        $timeout(function(){
+          var m = $("#"+$scope.stack.head.modal);
+          $('[data-toggle="tooltip"]',m).tooltip();
+          geodash.init.typeahead(
+            m,
+            $scope.workspace.config.featurelayers,
+            $scope.workspace.config.baselayers);
+        },0);
       }
       else
       {
@@ -135,7 +145,14 @@ geodash.controllers.GeoDashControllerModal = function(
           $.each(newScope.stack.head, function(key, value){ newScope[key] = value;});
           newScope.update_breadcrumbs();
           $("#"+newModal).modal('show');
-          $timeout(function(){ $('[data-toggle="tooltip"]', $("#"+newModal)).tooltip(); },0);
+          $timeout(function(){
+            var m =  $("#"+newModal);
+            $('[data-toggle="tooltip"]',m).tooltip();
+            geodash.init.typeahead(
+              m,
+              newScope.workspace.config.featurelayers,
+              newScope.workspace.config.baselayers);
+          },0);
         },0);
       }
     }
@@ -323,7 +340,11 @@ geodash.controllers.GeoDashControllerModal = function(
       $scope.clear();
       $timeout(function(){
         $scope.push(x);
-        $timeout(function(){ $('[data-toggle="tooltip"]', $("#"+x.modal)).tooltip(); },0);
+        $timeout(function(){
+          var m = $("#"+x.modal);
+          $('[data-toggle="tooltip"]', m).tooltip();
+          geodash.init.typeahead(m, $scope.workspace.config.featurelayers, $scope.workspace.config.baselayers);
+        },0);
       },0);
     }
     else
@@ -337,7 +358,10 @@ geodash.controllers.GeoDashControllerModal = function(
         var m = $("#"+x.modal);
         m.modal({'backdrop': 'static','keyboard':false});
         m.modal('show');
-        $timeout(function(){ $('[data-toggle="tooltip"]', m).tooltip(); },0);
+        $timeout(function(){
+          $('[data-toggle="tooltip"]', m).tooltip();
+          geodash.init.typeahead(m, $scope.workspace.config.featurelayers, $scope.workspace.config.baselayers);
+        },0);
       },0);
     }
   };
@@ -376,7 +400,11 @@ geodash.controllers.GeoDashControllerModal = function(
             $.each(newScope.stack.head, function(key, value){ newScope[key] = value;});
             newScope.update_breadcrumbs();
             $("#"+newModal).modal('show');
-            $timeout(function(){ $('[data-toggle="tooltip"]', $("#"+newModal)).tooltip(); },0);
+            $timeout(function(){
+              var m = $("#"+newModal);
+              $('[data-toggle="tooltip"]', m).tooltip();
+              geodash.init.typeahead(m, $scope.workspace.config.featurelayers, $scope.workspace.config.baselayers);
+            },0);
           },0);
         }
       }

@@ -95,16 +95,22 @@ geodash.layers.init_featurelayer_wms = function($scope, live, map_config, id, la
       error: function(){},
       success: function(){},
       complete: function(response){
-        var fl = L.tileLayer.wms(w.url, {
+        var options = {
           renderOrder: $.inArray(id, map_config.renderlayers),
           buffer: w.buffer || 0,
           version: w.version || "1.1.1",
-          layers: (Array.isArray(w.layers) ? w.layers.join(",") : w.layers),
-          styles: angular.isDefined(w.styles) ? w.styles.join(",") : '',
+          layers: geodash.codec.formatArray('layers', w, ''),
+          styles: geodash.codec.formatArray('styles', w, ''),
           format: w.format || 'image/png',
-          transparent: angular.isDefined(w.transparent) ? w.transparent : true,
+          transparent: extract('transparent', w, true),
           attribution: extract("source.attribution", layerConfig, undefined)
-        });
+        };
+        var cql_filter = extract('cql_filter', w, undefined);
+        if(angular.isDefined(cql_filter))
+        {
+          options["CQL_FILTER"] = cql_filter;
+        }
+        var fl = L.tileLayer.wms(w.url,options);
         live["featurelayers"][id] = fl;
         geodash.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
       }
@@ -112,16 +118,22 @@ geodash.layers.init_featurelayer_wms = function($scope, live, map_config, id, la
   }
   else
   {
-    var fl = L.tileLayer.wms(w.url, {
+    var options = {
       renderOrder: $.inArray(id, map_config.renderlayers),
       buffer: w.buffer || 0,
       version: w.version || "1.1.1",
-      layers: (Array.isArray(w.layers) ? w.layers.join(",") : w.layers),
-      styles: angular.isDefined(w.styles) ? w.styles.join(",") : '',
+      layers: geodash.codec.formatArray('layers', w, ''),
+      styles: geodash.codec.formatArray('styles', w, ''),
       format: w.format || 'image/png',
       transparent: angular.isDefined(w.transparent) ? w.transparent : true,
       attribution: extract("source.attribution", layerConfig, undefined)
-    });
+    };
+    var cql_filter = extract('cql_filter', w, undefined);
+    if(angular.isDefined(cql_filter))
+    {
+      options["CQL_FILTER"] = cql_filter;
+    }
+    var fl = L.tileLayer.wms(w.url, options);
     live["featurelayers"][id] = fl;
     geodash.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
   }
@@ -146,8 +158,8 @@ geodash.layers.init_featurelayer_wmts = function($scope, live, map_config, id, l
         var fl = L.tileLayer.wmts(w.url, {
           renderOrder: $.inArray(id, map_config.renderlayers),
           version: w.version || "1.0.0",
-          layer: (Array.isArray(w.layers) ? w.layers.join(",") : w.layers),
-          styles: angular.isDefined(w.styles) ? w.styles.join(",") : '',
+          layers: geodash.codec.formatArray('layers', w, ''),
+          styles: geodash.codec.formatArray('styles', w, ''),
           format: w.format || 'image/png',
           transparent: angular.isDefined(w.transparent) ? w.transparent : true,
           attribution: extract("source.attribution", layerConfig, undefined),
@@ -166,8 +178,8 @@ geodash.layers.init_featurelayer_wmts = function($scope, live, map_config, id, l
     var fl = L.tileLayer.wmts(w.url, {
       renderOrder: $.inArray(id, map_config.renderlayers),
       version: w.version || "1.0.0",
-      layer: (Array.isArray(w.layers) ? w.layers.join(",") : w.layers),
-      styles: angular.isDefined(w.styles) ? w.styles.join(",") : '',
+      layers: geodash.codec.formatArray('layers', w, ''),
+      styles: geodash.codec.formatArray('styles', w, ''),
       format: w.format || 'image/png',
       transparent: angular.isDefined(w.transparent) ? w.transparent : true,
       attribution: extract("source.attribution", layerConfig, undefined),

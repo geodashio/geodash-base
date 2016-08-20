@@ -182,7 +182,7 @@ geodash.init.typeahead = function($element, featurelayers, baselayers)
         baselayers = baselayers || geodash.api.listBaseLayers();
         bloodhoundData = $.map(baselayers, function(bl, id){ return {'id': id, 'text': id}; });
       }
-      else
+      else if(initialData.length > 0)
       {
         bloodhoundData = [].concat(geodash.initial_data["data"][initialData]);
         for(var i = 0; i < bloodhoundData.length; i++)
@@ -815,6 +815,13 @@ geodash.listeners.showModal = function(event, args)
           $("#"+id).modal('toggle');
         },0);
     });
+};
+
+geodash.ui.toggleOptions = function($event, selector)
+{
+  //var selector = $(event.currentTarget).attr('data-target');
+  //try{ $(selector).typeahead('close'); }catch(err){};
+  return geodash.ui.showOptions($event, selector);
 };
 
 geodash.ui.showOptions = function($event, selector)
