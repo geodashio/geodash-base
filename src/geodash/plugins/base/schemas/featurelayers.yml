@@ -251,17 +251,23 @@ featurelayers:
           verbose_singular: Heatmap
           fields:
             - id: blur
-              type: text
+              type: int
               label: Heatmap Blur
               placeholder: 15
               required: false
               description: "heatmap blur"
             - id: radius
-              type: text
+              type: int
               label: Heatmap Radius
               placeholder: 5
               required: false
               description: "heatmap radius"
+            - id: weight
+              type: text
+              label: Heatmap Weight Attribute
+              placeholder: none
+              required: false
+              description: "Name of the attribute that is used as the weight. If not included, everything is given weight of 1."
       - id: popup
         type: object
         label: Popup
