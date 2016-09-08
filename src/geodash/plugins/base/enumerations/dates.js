@@ -1,7 +1,7 @@
 var MONTHS_NUM = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 //Array(12).fill().map((x,i)=>i)
 
-var MONTHS_LONG =[
+var MONTHS_LONG = [
   "January",
   "February",
   "March",

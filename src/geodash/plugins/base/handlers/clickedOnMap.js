@@ -21,7 +21,8 @@ geodash.handlers["clickedOnMap"] = function($scope, $interpolate, $http, $q, eve
         srsName: "EPSG:4326",
       };
 
-      var targetLocation = new L.LatLng(args.lat, args.lon);
+      //var targetLocation = new L.LatLng(args.lat, args.lon);
+      var targetLocation = geodash.normalize.point(args);
       var bbox = geodash.tilemath.point_to_bbox(args.lon, args.lat, z, 4).join(",");
       var typeNames = extract('wfs.layers', fl, undefined) || extract('wms.layers', fl, undefined) || [] ;
       if(angular.isString(typeNames))
@@ -53,10 +54,7 @@ geodash.handlers["clickedOnMap"] = function($scope, $interpolate, $http, $q, eve
       $scope.$broadcast("openPopup", {
         'featureLayer': fl,
         'feature': featureAndLocation.feature,
-        'location': {
-          'lon': featureAndLocation.location.lng,
-          'lat': featureAndLocation.location.lat
-        }
+        'location': geodash.normalize.point(featureAndLocation.location)
       });
     }
   });

@@ -6,22 +6,17 @@ path:
   geodash: "./src/geodash"
 plugins:
   - base
-  - legend
+  - branch: master
+    url: https://github.com/geodashio/geodash-plugin-filters.git
+  - branch: master
+    url: https://github.com/geodashio/geodash-plugin-legend.git
   - welcome
   - about
   - download
-  - overlays
+  - version: master
+    url: https://github.com/geodashio/geodash-plugin-overlays.git
   - sidebar_toggle_left
   - sidebar_toggle_right
-dependencies:
-  production:
-    project: []
-    javascript:
-      - "./src/js/main/*.js"
-  test:
-    javascript:
-      - "./src/js/main/*.js"
-      - "./src/js/polyfill/*.js"
 resources:
   - name: jquery-ui.min.css
     path: ./lib/jquery-ui/1.11.4/jquery-ui.min.css
@@ -37,8 +32,18 @@ resources:
     path: ./lib/leaflet/1.0.0-b1/leaflet.css
   - name: leaflet.label.css
     path: ./lib/Leaflet.label/leaflet-master/leaflet.label.css
+  - name: ol3.css
+    path: "./lib/ol3/{{ version }}/ol.css"
   - name: font-awesome.min.css
-    path: ./lib/font-awesome/4.5.0/css/font-awesome.min.css
+    path: ./lib/font-awesome/4.5.0/css/font-awesome.min.
+  # For development, comment the following.
+  - name: geodash.js
+    path: "./lib/geodashjs/{{ version }}/geodash.js"
+    minified: "./lib/geodashjs/{{ version }}/geodash.min.js"
+  # For development, uncomment the following
+  #- name: geodash.js
+  #  path: "/home/vagrant/geodash.js.git/dist/geodash.js"
+  #  minified: "/home/vagrant/geodash.js.git/dist/geodash.min.js"
   - name: angular.js
     path: "./lib/angularjs/{{ version }}/angular.js"
     minified: "./lib/angularjs/{{ version }}/angular.min.js"
@@ -64,7 +69,8 @@ resources:
     path: "./lib/select2/select2-{{ version }}/dist/js/select2.full.js"
     minified: "./lib/select2/select2-{{ version }}/dist/js/select2.full.min.js"
   - name: typeahead.js
-    path: "./lib/typeahead/{{ version }}/typeahead-{{ version }}.js"
+    path: "./lib/typeahead/{{ version }}/typeahead.bundle.js"
+    minified: "./lib/typeahead/{{ version }}/typeahead.bundle.min.js"
   - name: bootstrap.js
     path: "./lib/bootstrap/{{ version }}/dist/js/bootstrap.js"
     minified: "./lib/bootstrap/{{ version }}/dist/js/bootstrap.min.js"
@@ -74,6 +80,9 @@ resources:
   - name: c3.js
     path: "./lib/c3/{{ version }}/c3.js"
     minified: "./lib/c3/{{ version }}/c3.min.js"
+  - name: ol3.js
+    path: "./lib/ol3/{{ version }}/ol-debug.js"
+    minified: "./lib/ol3/{{ version }}/ol.js"
   - name: leaflet-src.js
     path: "./lib/leaflet/{{ version }}/leaflet-src.js"
     minified: "./lib/leaflet/{{ version }}/leaflet.js"

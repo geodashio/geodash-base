@@ -6,7 +6,8 @@ view:
     placeholder: osm
     required: true
     description: "The default base layer shown on page load."
-    source: baselayers
+    typeahead:
+      local: baselayers
   latitude:
     order: 0
     type: int
@@ -49,4 +50,7 @@ renderlayers:
   placeholder: "Render Layers"
   required: true
   description: "The layers in stack order to render; the first is on top; the last is on the bottom."
-  source: layers
+  search:
+    local: layers
+    templates:
+      suggestion: GeoDashLayer  # default is 'default'.  Links to geodash.typeahead.templates.suggestion.*

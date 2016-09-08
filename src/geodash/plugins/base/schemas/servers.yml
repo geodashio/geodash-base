@@ -1,0 +1,107 @@
+---
+servers:
+  type: objectarray
+  label: Servers
+  placeholder: "Servers"
+  required: true
+  description: "Known servers available."
+  schema:
+    verbose_singular: Server
+    verbose_plural: Servers
+    fields:
+      - id: id
+        type: text
+        label: ID
+        placeholder: ID
+        required: true
+        description: "The id of your server."
+      - id: title
+        type: text
+        label: Title
+        placeholder: title
+        required: true
+        description: "The title of your server."
+      - id: description
+        type: text
+        label: Description
+        placeholder: description
+        required: true
+        description: "The description of your server."
+      - id: type
+        type: text
+        label: Type
+        placeholder: wms, mapbox, tegola
+        required: false
+        description: "The type of the server (wms, mapbox, tegola)."
+        options:
+          - wms
+          - mapbox
+          - tegola
+      - id: wms
+        type: object
+        label: WMS
+        placeholder: "wms"
+        required: false
+        description: "WMS configuration."
+        when:
+          field: type
+          values:
+            - wms
+        schema:
+          verbose_singular: WMS
+          fields:
+            - id: url
+              type: text
+              label: WMS URL
+              placeholder: "http://geonode.wfp.org/geoserver/geonode/wms"
+              required: false
+              description: "The url of the WMS server."
+      - id: wfs
+        type: object
+        label: WFS
+        placeholder: "wfs"
+        required: false
+        description: "WFS configuration."
+        when:
+          field: type
+          values:
+            - wms
+        schema:
+          verbose_singular: WFS
+          fields:
+            - id: version
+              type: text
+              label: WFS Version
+              placeholder: "1.0.0"
+              required: false
+              description: "The version of the WFS server."
+              options:
+                - "1.0.0"
+                - "1.1.0"
+                - "2.0"
+                - "2.0.2"
+            - id: url
+              type: text
+              label: WFS URL
+              placeholder: "http://geonode.wfp.org/cors/geoserver/wfs"
+              required: false
+              description: "The url of the WFS server."
+      - id: tegola
+        type: object
+        label: Tegola
+        placeholder: "tegola"
+        required: false
+        description: "Tegola configuration."
+        when:
+          field: type
+          values:
+            - tegola
+        schema:
+          verbose_singular: Tegola
+          fields:
+            - id: url
+              type: text
+              label: Tegola URL
+              placeholder: "http://localhost:9090"
+              required: false
+              description: "The url of the Tegola server."

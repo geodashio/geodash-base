@@ -21,63 +21,22 @@ templates:
   - geodash_btn_info.tpl.html
   - geodash_btn.tpl.html
   - geodash_label.tpl.html
-filters:
-  - default.js
-  - md2html.js
-  - percent.js
-  - tabLabel.js
-  - as_float.js
-  - add.js
-  - title.js
-  - as_array.js
-  - sortItemsByArray.js
-  - breakpoint.js
-  - breakpoints.js
-  - position_x.js
-  - width_x.js
-  - length.js
-  - layer_is_visible.js
-  - common/append.js
-  - common/default_if_undefined.js
-  - common/default_if_undefined_or_blank.js
-  - common/extract.js
-  - common/extractTest.js
-  - common/inArray.js
-  - common/not.js
-  - common/prepend.js
-  - common/parseTrue.js
-  - common/ternary.js
-  - common/ternary_defined.js
-  - common/yaml.js
-  - array/join.js
-  - array/first.js
-  - array/last.js
-  - array/choose.js
-  - format/formatBreakPoint.js
-  - format/formatFloat.js
-  - format/formatInteger.js
-  - format/formatArray.js
-  - format/formatMonth.js
-  - math/eq.js
-  - math/lte.js
-  - math/gte.js
-  - math/gt.js
-  - string/replace.js
-  - string/split.js
-  - url/url_shapefile.js
-  - url/url_geojson.js
-  - url/url_kml.js
-  - url/url_describefeaturetype.js
+filters: []
 handlers:
   - clickedOnMap.js
+  - filterChanged.js
   - hideLayer.js
   - hideLayers.js
   - layerLoaded.js
   - requestToggleComponent.js
+  - selectStyle.js
   - showLayer.js
   - showLayers.js
+  - stateChanged.js
   - switchBaseLayer.js
-  - toggleComponent.js
+  #- leaflet/toggleComponent.js
+  - ol3/toggleComponent.js
+  - viewChanged.js
   - zoomToLayer.js
 schemas:
   - base.yml
@@ -85,5 +44,6 @@ schemas:
   - featurelayers.yml
   - controls.yml
   - view.yml
+  - servers.yml
   - pages.yml
 modals: []
