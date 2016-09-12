@@ -371,3 +371,18 @@ featurelayers:
                         options:
                           - always
                           - defined
+      - id: metadata
+        type: object
+        label: Metadata
+        placeholder: "metadata (keywords, etc.)"
+        required: false
+        description: "Metadata (keywords, etc.)."
+        schema:
+          verbose_singular: Metadata
+          fields:
+            - id: keywords
+              type: stringarray
+              label: Keywords
+              placeholder: "keywords"
+              required: true
+              description: "Keywords"
