@@ -236,6 +236,132 @@ featurelayers:
               placeholder: debug
               required: false
               description: "Debug.  If yes, will return border of each tile as vectors."
+      - id: carto
+        type: object
+        label: Cartography
+        placeholder: "Cartography (styles, etc.)."
+        required: false
+        description: "Cartography (styles, etc.)."
+        when:
+          field: type
+          values:
+            - geojson
+        schema:
+          verbose_singular: Cartography
+          fields:
+            - id: styles
+              type: objectarray
+              label: Styles
+              placeholder: "styles"
+              required: false
+              description: "styles"
+              schema:
+                verbose_singular: Style
+                verbose_plural: Style
+                fields:
+                  - id: id
+                    type: text
+                    label: Style ID
+                    placeholder: "id"
+                    required: true
+                    description: "The id of the style."
+                  - id: title
+                    type: text
+                    label: Style Title
+                    placeholder: "title"
+                    required: true
+                    description: "The title of the style."
+                  - id: description
+                    type: text
+                    label: Style Description
+                    placeholder: "description"
+                    required: true
+                    description: "The description of the style."
+                  - id: symbolizers
+                    type: objectarray
+                    label: Symbolizers
+                    placeholder: "symbolizers"
+                    required: false
+                    description: "symbolizers"
+                    schema:
+                      verbose_singular: Symbolizer
+                      verbose_plural: Symbolizers
+                      fields:
+                        - id: id
+                          type: text
+                          label: Symbolizer ID
+                          placeholder: "id"
+                          required: true
+                          description: "The id of the symbolizer."
+                        - id: title
+                          type: text
+                          label: Symbolizer Title
+                          placeholder: "title"
+                          required: true
+                          description: "The title of the symbolizer."
+                        - id: type
+                          type: text
+                          label: Symbolizer Type
+                          placeholder: "title"
+                          required: true
+                          description: "The type of the symbolizer."
+                          options:
+                            - point
+                            - line
+                            - polygon
+                        - id: static
+                          type: object
+                          label: Symbolizer Static
+                          placeholder: "Symbolizer Static"
+                          required: false
+                          description: "Symbolizer Static"
+                          schema:
+                            verbose_singular: Static
+                            fields:
+                              - id: properties
+                                type: objectarray
+                                label: Symbolizer Static Properties
+                                placeholder: "properties"
+                                required: false
+                                description: "properties"
+                                schema:
+                                  verbose_singular: Property
+                                  verbose_plural: Properties
+                                  fields:
+                                    - id: name
+                                      type: text
+                                      label: Property Name
+                                      placeholder: "name"
+                                      required: true
+                                      description: "The name of the property."
+                                      options:
+                                        - radius
+                                        - fillColor
+                                        - fillOpacity
+                                        - strokeWidth
+                                        - strokeColor
+                                        - strokeOpacity
+                                    - id: value
+                                      type: text
+                                      label: Property value
+                                      placeholder: "value"
+                                      required: true
+                                      description: "The value of the property."
+                        - id: dynamic
+                          type: object
+                          label: Symbolizer Dynamic
+                          placeholder: "Symbolizer Dynamic"
+                          required: false
+                          description: "Symbolizer Dynamic"
+                          schema:
+                            verbose_singular: Dynamic
+                            fields:
+                              - id: func
+                                type: template
+                                label: Symbolizer Dynamic Function Name
+                                placeholder: "function name"
+                                required: false
+                                description: "Symbolizer Dynamic Function Name"
       - id: heatmap
         type: object
         label: Heatmap
