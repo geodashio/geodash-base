@@ -1,13 +1,5 @@
 ---
 view:
-  baselayer:
-    type: text
-    label: Default Base Layer
-    placeholder: osm
-    required: true
-    description: "The default base layer shown on page load."
-    typeahead:
-      local: baselayers
   latitude:
     order: 0
     type: int
@@ -44,6 +36,24 @@ view:
     minValue: 0
     maxValue: 18
     description: "The maximum a user can zoom in."
+  baselayer:
+    type: text
+    label: Selected Base Layer
+    placeholder: osm
+    required: true
+    description: "The selected base layer to show on page load."
+    typeahead:
+      local: baselayers
+  featurelayers:
+    type: stringarray
+    label: Selected Feature Layers
+    placeholder: "Selected Feature Layers"
+    required: true
+    description: "The selected feature layers to show on page load."
+    search:
+      local: featurelayers
+      templates:
+        suggestion: GeoDashLayer  # default is 'default'.  Links to geodash.typeahead.templates.suggestion.*
 renderlayers:
   type: stringarray
   label: Render Layers

@@ -1,8 +1,8 @@
 ---
 featurelayers:
   type: objectarray
-  label: Feature Layers
-  placeholder: "Feature Layers"
+  label: "Available Feature Layers"
+  placeholder: "Available Feature Layers"
   required: true
   description: "Feature layers available."
   search:
@@ -11,8 +11,8 @@ featurelayers:
       suggestion: WMSLayer  # default is 'default'.  Links to geodash.typeahead.templates.suggestion.*
     datasets: WMSServers
   schema:
-    verbose_singular: Feature Layer
-    verbose_plural: Feature Layers
+    verbose_singular: Available Feature Layer
+    verbose_plural: Available Feature Layers
     fields:
       - id: id
         type: text
@@ -362,6 +362,12 @@ featurelayers:
                                 placeholder: "function name"
                                 required: false
                                 description: "Symbolizer Dynamic Function Name"
+                                search:
+                                  local:
+                                    name: reflect
+                                    args:
+                                      locations:
+                                        - dynamicStyleFn
       - id: heatmap
         type: object
         label: Heatmap

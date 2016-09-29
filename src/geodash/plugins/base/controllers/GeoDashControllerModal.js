@@ -1,5 +1,6 @@
 geodash.controllers.GeoDashControllerModal = function(
-  $scope, $element, $controller, $timeout, state, map_config, live)
+  $scope, $element, $controller, $interpolate, $timeout,
+  state, map_config, live)
 {
   angular.extend(this, $controller('GeoDashControllerBase', {$element: $element, $scope: $scope}));
 
@@ -25,156 +26,6 @@ geodash.controllers.GeoDashControllerModal = function(
     {
       return true;
     }
-  };
-
-  $scope.pop = function()
-  {
-    var removed = $scope.stack.backtrace.shift();
-    $scope.update_stack();
-    $scope.update_main(removed);
-    $scope.update_ui(removed, $scope.stack.backtrace);
-  };
-
-  $scope.update_breadcrumbs = function()
-  {
-    var breadcrumbs = [];
-    if(angular.isDefined(extract('stack.backtrace', $scope)))
-    {
-      for(var i = $scope.stack.backtrace.length - 1; i >= 0; i--)
-      {
-        var x = $scope.stack.backtrace[i];
-        if(angular.isDefined(x.objectIndex))
-        {
-          var obj = extract(x.path_array, x.workspace);
-          var content = extract('title', obj) || extract('id', obj) || x.objectIndex;
-          var link = "#";
-          var bc = {'content': content, 'link': link};
-          breadcrumbs.push(bc);
-        }
-        else
-        {
-          var keyChain = x.schemapath_array || x.basepath_array;
-          if(angular.isDefined(keyChain))
-          {
-            var f = extract(keyChain, x.schema);
-            if(angular.isDefined(f))
-            {
-              var t = extract("type", f);
-              var content = undefined;
-              var link = "#";
-              if(t == "object")
-              {
-                content = extract("schema.verbose_singular", f) || extract("label", f);
-              }
-              else if(t == "objectarray" || t == "stringarray" || t == "textarray" || t == "templatearray")
-              {
-                content = extract("schema.verbose_plural", f) || extract("label", f);
-              }
-              else
-              {
-                content = extract("label", f);
-              }
-              var bc = {'content': content, 'link': link};
-              breadcrumbs.push(bc);
-            }
-          }
-        }
-      }
-      $scope.breadcrumbs = breadcrumbs;
-    }
-    return breadcrumbs;
-  };
-  $scope.update_ui = function(removed, backtrace)
-  {
-    if(angular.isDefined($scope.stack.head))
-    {
-      if($scope.stack.head.modal == removed.modal)
-      {
-        $scope.update_breadcrumbs();
-        $timeout(function(){ geodash.ui.update($scope.stack.head.modal); },0);
-      }
-      else
-      {
-        var oldModal = removed.modal;
-        var newModal = $scope.stack.head.modal;
-        $("#"+oldModal).modal('hide');
-        $("#"+newModal).modal({'backdrop': 'static', 'keyboard':false});
-        //var newScope = geodash.api.getScope(newModal);
-        // newScope.clear(); Should have already happened in clear_all
-        $timeout(function(){
-          var newScope = geodash.api.getScope(newModal);
-          newScope.update_stack(backtrace);
-          $.each(newScope.stack.head, function(key, value){ newScope[key] = value;});
-          newScope.update_breadcrumbs();
-          $("#"+newModal).modal('show');
-          $timeout(function(){ geodash.ui.update(newModal); },0);
-        },0);
-      }
-    }
-    else
-    {
-      $("#"+removed.modal).modal('hide');
-    }
-  };
-
-  $scope.clear = function()
-  {
-    $scope.clear_all(1);
-  };
-  $scope.clear_all = function(count)
-  {
-    var backtrace = $scope.stack.backtrace;
-    if(backtrace.length > 0)
-    {
-      var clear_array = [
-        "workspace", "workspace_flat",
-        "schema", "schema_flat",
-        "basepath", "basepath_flat", "basepath_array",
-        "schemapath", "schemapath_flat", "schemapath_array",
-        "objectIndex",
-        "path", "path_flat", "path_array",
-        "breadcrumbs"];
-      var scopes = {};
-      var s = undefined;
-      for(var i = 0; i < count && i < backtrace.length; i++)
-      {
-        var x = backtrace[i];
-        if(angular.isUndefined(s))
-        {
-          var m = extract('modal', x);
-          s = angular.isDefined(m) ? geodash.api.getScope(m) : $scope;
-        }
-        $.each(x, function(key, value){ s[key] = undefined; });
-        $.each(clear_array, function(index, value){ s[value] = undefined; });
-      }
-    }
-  };
-
-  $scope.push = function(x, backtrace)
-  {
-    $scope.clear(); // Clean Old Values
-    x = $scope.expand(x)
-    $scope.update_stack([x].concat(backtrace || $scope.stack.backtrace));
-    $.each($scope.stack.head, function(key, value){ $scope[key] = value; });
-    $scope.update_breadcrumbs();
-  };
-
-  $scope.rollback = function(index)
-  {
-    var count = angular.isDefined(index) ? ($scope.stack.backtrace.length - index - 1) : 1;
-    $scope.clear_all(count);
-    $timeout(function(){
-      var removed = $scope.stack.backtrace[0];
-      $scope.update_stack($scope.stack.backtrace.slice(count));
-      $scope.update_main(removed);
-      $scope.update_ui(removed, $scope.stack.backtrace);
-    },0);
-  };
-
-  $scope.go_back = function()
-  {
-    $scope.clear();
-    $timeout(function(){$scope.pop();},0);
   };
 
   $scope.edit_field = function(field_id, field_index)
@@ -210,6 +61,53 @@ geodash.controllers.GeoDashControllerModal = function(
       $("#"+x.modal).modal('show');
       $timeout(function(){ geodash.ui.update(x.modal); },0);
     }
+
+  };
+
+  $scope.pop = function()
+  {
+    var removed = $scope.stack.backtrace.shift();
+    $scope.update_stack();
+    $scope.update_main(removed);
+    $scope.update_ui(removed, $scope.stack.backtrace);
+  };
+
+
+  $scope.rollback_all = function(index)
+  {
+    var count = $scope.stack.backtrace.length;
+    $scope.clear_all(count);
+    $timeout(function(){
+      var removed = $scope.stack.backtrace[0];
+      $scope.update_stack($scope.stack.backtrace.slice(count));
+      $scope.update_main(removed);
+      $scope.update_ui(removed, $scope.stack.backtrace);
+    },0);
+  }
+  $scope.rollback = function(index)
+  {
+    var count = undefined;
+    if(angular.isNumber(index))
+    {
+      count = $scope.stack.backtrace.length - index - 1;
+    }
+    else
+    {
+      count = 1;
+    }
+    $scope.clear_all(count);
+    $timeout(function(){
+      var removed = $scope.stack.backtrace[0];
+      $scope.update_stack($scope.stack.backtrace.slice(count));
+      $scope.update_main(removed);
+      $scope.update_ui(removed, $scope.stack.backtrace);
+    },0);
+  };
+
+  $scope.go_back = function()
+  {
+    $scope.clear();
+    $timeout(function(){$scope.pop();},0);
   };
 
   $scope.add_object = function(field_id)
