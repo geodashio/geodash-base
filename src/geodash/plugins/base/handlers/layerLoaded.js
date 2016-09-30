@@ -3,7 +3,8 @@ geodash.handlers["layerLoaded"] = function($scope, $interpolate, $http, $q, even
     var type = args.type;
     var layer = args.layer;
     var visible = args.visible != undefined ? args.visible : true;
-    if(type == "featurelayer")
+    // $scope.state.view.featurelayers is hardcoded on load now
+    /*if(type == "featurelayer")
     {
       if(visible)
       {
@@ -13,5 +14,5 @@ geodash.handlers["layerLoaded"] = function($scope, $interpolate, $http, $q, even
     else if(type == "baselayer")
     {
       $scope.state.view.baselayer = layer;
-    }
+    }*/
 };

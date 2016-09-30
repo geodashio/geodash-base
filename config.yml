@@ -15,6 +15,7 @@ plugins:
   - download
   - version: master
     url: https://github.com/geodashio/geodash-plugin-overlays.git
+  #- file:///home/vagrant/geodash-plugin-overlays.git
   - sidebar_toggle_left
   - sidebar_toggle_right
 resources:

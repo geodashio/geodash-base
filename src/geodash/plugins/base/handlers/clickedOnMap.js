@@ -59,7 +59,7 @@ geodash.handlers["clickedOnMap"] = function($scope, $interpolate, $http, $q, eve
         return {
           'layer': layer.get('id'),
           'feature': geodash.normalize.feature(feature),
-          'location': geodash.normalize.point(ol.proj.toLonLat(map.getCoordinateFromPixel([args.pixel.x, args.pixel.y]), map.getView.getProjection()))
+          'location': geodash.normalize.point(ol.proj.toLonLat(map.getCoordinateFromPixel([args.pixel.x, args.pixel.y]), map.getView().getProjection()))
         };
       },
       null,
@@ -71,7 +71,7 @@ geodash.handlers["clickedOnMap"] = function($scope, $interpolate, $http, $q, eve
 
   if(angular.isDefined(featureAndLocation))
   {
-    $scope.broadcast("openPopup", {
+    $scope.$broadcast("openPopup", {
       'featureLayer': geodash.api.getFeatureLayer(featureAndLocation.layer),
       'feature': featureAndLocation.feature,
       'location': featureAndLocation.location
