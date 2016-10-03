@@ -41,6 +41,7 @@ geodash.controllers.GeoDashControllerModal = function(
       'workspace': $scope.stack.head.workspace,
       'schema': $scope.stack.head.schema,
       'basepath': $scope.stack.head.path,
+      'basepath_array': $scope.stack.head.path_array,
       'schemapath': schemapath,
       'objectIndex': field_id
     };
@@ -133,6 +134,7 @@ geodash.controllers.GeoDashControllerModal = function(
       'workspace': $scope.stack.head.workspace,
       'schema': $scope.stack.head.schema,
       'basepath': $scope.stack.head.path,
+      'basepath_array': $scope.stack.head.path_array,
       'schemapath': schemapath,
       'objectIndex': field_id
     };
@@ -177,6 +179,7 @@ geodash.controllers.GeoDashControllerModal = function(
       'workspace': $scope.stack.head.workspace,
       'schema': $scope.stack.head.schema,
       'basepath': $scope.stack.head.path,
+      'basepath_array': $scope.stack.head.path_array,
       'schemapath': schemapath,
       'objectIndex': field_id
     };
@@ -249,8 +252,8 @@ geodash.controllers.GeoDashControllerModal = function(
       else
       {
         var targetScope = geodash.api.getScope("geodash-sidebar-right");
-        targetScope.workspace = workspace;
-        targetScope.workspace_flat = workspace_flat;
+        targetScope.stack.head.workspace =  targetScope.workspace = workspace;
+        targetScope.stack.head.workspace_flat =  targetScope.workspace_flat = workspace_flat;
         $("#"+saved.modal).modal('hide');
       }
     },0);

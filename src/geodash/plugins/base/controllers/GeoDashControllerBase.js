@@ -11,6 +11,8 @@ geodash.controllers.GeoDashControllerBase = function(
     'backtrace': [] // Full list to include states from other modals
   };
 
+  /*
+  * ng-click="clear_field(object_field_id, objectFieldIndex)"
   $scope.clear_field = function(field_flat, field_index)
   {
     if(angular.isDefined(field_flat))
@@ -25,6 +27,11 @@ geodash.controllers.GeoDashControllerBase = function(
         }
       });
     }
+  };*/
+
+  $scope.asset = function(id)
+  {
+    return geodash.api.getAsset(id);
   };
 
   $scope.update_stack = function(backtrace)
@@ -80,7 +87,7 @@ geodash.controllers.GeoDashControllerBase = function(
 
       if(angular.isDefined(x.basepath))
       {
-        x.basepath_array = x.basepath.split(".");
+        if(! angular.isDefined(x.basepath_array)){ x.basepath_array = x.basepath.split("."); }
         if(angular.isDefined(x.schemapath))
         {
           x.object_fields = extract(x.schemapath_array.concat(["schema", "fields"]), x.schema, []);
@@ -297,6 +304,21 @@ geodash.controllers.GeoDashControllerBase = function(
       {
         include = true;
       }
+      else if(angular.isDefined(extract("search.datasets", field)))
+      {
+        var datasets = extract("search.datasets", field);
+        if((angular.isString(datasets) || Array.isArray(datasets)) && datasets.length > 0)
+        {
+          include = true;
+        }
+      }
+      else if(angular.isString(extract("search.dataset", field)))
+      {
+        if(extract("search.dataset", field).length > 0)
+        {
+          include = true;
+        }
+      }
       else if(angular.isDefined(extract("search.local", field)))
       {
         if(angular.isString(extract("search.local", field)))
@@ -319,6 +341,34 @@ geodash.controllers.GeoDashControllerBase = function(
     return include;
   };
 
+
+$scope.typeaheadDatasetsForSearch = function(x)
+{
+  var datasets = "";
+
+  if(! angular.isDefined(x))
+  {
+    x = extract($scope.schemapath, $scope.schema, undefined);
+  }
+
+  if(angular.isDefined(x))
+  {
+    if(Array.isArray(extract("search.datasets", x)))
+    {
+      datasets = extract("search.datasets", x).join(",");
+    }
+    else if(angular.isString(extract("search.datasets", x)))
+    {
+      datasets = extract("search.datasets", x);
+    }
+    else if(angular.isString(extract("search.dataset", x)))
+    {
+      datasets = extract("search.dataset", x);
+    }
+  }
+  return datasets;
+};
+
   $scope.localDataForSearch = function(x)
   {
     var localData = "";
@@ -340,6 +390,7 @@ geodash.controllers.GeoDashControllerBase = function(
     }
     return localData;
   };
+
   $scope.remoteDataForSearch = function(x)
   {
     var data = "";
@@ -391,5 +442,10 @@ geodash.controllers.GeoDashControllerBase = function(
       data = extract("search.datasets", schema, "");
     }
     return data;
+  };
+
+  $scope.asset = function(id)
+  {
+    return geodash.api.getByID(id, $scope.workspace.config.assets);
   };
 };

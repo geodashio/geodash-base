@@ -7,6 +7,23 @@ geodash.handlers["toggleComponent"] = function($scope, $interpolate, $http, $q, 
   var classes = component+"-open "+component+"-"+position+"-open";
   $(args.selector).toggleClass(classes);
   setTimeout(function(){
-    $scope.live["map"].updateSize();
+
+    if(geodash.mapping_library == "ol3")
+    {
+      setTimeout(function(){
+
+        var m = geodash.var.map;
+        m.renderer_.dispose();
+        m.renderer_ = new ol.renderer.canvas.Map(m.viewport_, m);
+        m.updateSize();
+        m.renderSync();
+
+      }, 0);
+    }
+    else if(geodash.mapping_library == "leaflet")
+    {
+      setTimeout(function(){ geodash.var.map._onResize(); }, 0);
+    }
+
   },2000);
 };

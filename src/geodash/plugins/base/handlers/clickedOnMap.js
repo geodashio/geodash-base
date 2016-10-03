@@ -16,7 +16,10 @@ geodash.handlers["clickedOnMap"] = function($scope, $interpolate, $http, $q, eve
     var fl = geodash.api.getFeatureLayer(visibleFeatureLayers[i], {"scope": $scope});
     if(fl.type == "geojson")
     {
-      featurelayers_geojson.push(fl.id);
+      if(angular.isDefined("popup.panes", fl))
+      {
+        featurelayers_geojson.push(fl.id);
+      }
     }
     else if(angular.isDefined(extract("wfs", fl)))
     {

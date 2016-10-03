@@ -41,6 +41,7 @@ handlers:
 schemas:
   - base.yml
   - baselayers.yml
+  - assets.yml
   - featurelayers.yml
   - controls.yml
   - view.yml
