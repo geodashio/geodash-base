@@ -8,8 +8,10 @@ plugins:
   - base
   - branch: master
     url: https://github.com/geodashio/geodash-plugin-filters.git
+  #- file:///home/vagrant/geodash-plugin-filters.git
   - branch: master
     url: https://github.com/geodashio/geodash-plugin-legend.git
+  #- file:///home/vagrant/geodash-plugin-legend.git
   - welcome
   - about
   - download

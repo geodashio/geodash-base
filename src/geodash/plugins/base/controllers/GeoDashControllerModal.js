@@ -37,6 +37,7 @@ geodash.controllers.GeoDashControllerModal = function(
     }
     var x = {
       'modal': 'geodash-modal-edit-field',
+      'tab': 'modal-edit-field-pane-input',
       'prev': $scope.stack.head.modal,
       'workspace': $scope.stack.head.workspace,
       'schema': $scope.stack.head.schema,
@@ -60,7 +61,7 @@ geodash.controllers.GeoDashControllerModal = function(
       geodash.api.getScope(x.modal).push(x, $scope.stack.backtrace);
       $("#"+x.modal).modal({'backdrop': 'static','keyboard':false});
       $("#"+x.modal).modal('show');
-      $timeout(function(){ geodash.ui.update(x.modal); },0);
+      $timeout(function(){ geodash.ui.update(x.modal, x.tab); },0);
     }
 
   };
@@ -130,6 +131,7 @@ geodash.controllers.GeoDashControllerModal = function(
     }
     var x = {
       'modal': 'geodash-modal-search-object',
+      'tab': 'modal-search-object-pane-input',
       'prev': $scope.stack.head.modal,
       'workspace': $scope.stack.head.workspace,
       'schema': $scope.stack.head.schema,
@@ -147,7 +149,7 @@ geodash.controllers.GeoDashControllerModal = function(
       $scope.clear();
       $timeout(function(){
         $scope.push(x);
-        $timeout(function(){ geodash.ui.update(x.modal); },0);
+        $timeout(function(){ geodash.ui.update(x.modal, x.tab); },0);
       },0);
     }
     else
@@ -161,7 +163,7 @@ geodash.controllers.GeoDashControllerModal = function(
         var m = $("#"+x.modal);
         m.modal({'backdrop': 'static','keyboard':false});
         m.modal('show');
-        $timeout(function(){ geodash.ui.update(x.modal); },0);
+        $timeout(function(){ geodash.ui.update(x.modal, x.tab); },0);
       },0);
     }
   };
@@ -175,6 +177,7 @@ geodash.controllers.GeoDashControllerModal = function(
     }
     var x = {
       'modal': 'geodash-modal-edit-object',
+      'tab': 'modal-edit-object-pane-input',
       'prev': $scope.stack.head.modal,
       'workspace': $scope.stack.head.workspace,
       'schema': $scope.stack.head.schema,
@@ -192,7 +195,7 @@ geodash.controllers.GeoDashControllerModal = function(
       $scope.clear();
       $timeout(function(){
         $scope.push(x);
-        $timeout(function(){ geodash.ui.update(x.modal); },0);
+        $timeout(function(){ geodash.ui.update(x.modal, x.tab); },0);
       },0);
     }
     else
@@ -206,7 +209,7 @@ geodash.controllers.GeoDashControllerModal = function(
         var m = $("#"+x.modal);
         m.modal({'backdrop': 'static','keyboard':false});
         m.modal('show');
-        $timeout(function(){ geodash.ui.update(x.modal); },0);
+        $timeout(function(){ geodash.ui.update(x.modal, x.tab); },0);
       },0);
     }
   };

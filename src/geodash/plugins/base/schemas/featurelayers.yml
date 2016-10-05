@@ -32,12 +32,6 @@ featurelayers:
         placeholder: description
         required: true
         description: "The description of your base layer."
-      - id: "legend.label"
-        type: "text"
-        label: "Legend Label"
-        placeholder: "legend label"
-        required: false
-        description: "The label to use in the legend for this layer."
       - id: "auth"
         type: text
         label: Authentication
@@ -277,6 +271,24 @@ featurelayers:
                     placeholder: "description"
                     required: true
                     description: "The description of the style."
+                  - id: legend
+                    type: object
+                    label: Legend
+                    placeholder: "legend"
+                    required: false
+                    description: "Legend"
+                    schema:
+                      verbose_singular: Legend
+                      fields:
+                        - id: type
+                          type: text
+                          label: Legend type
+                          placeholder: "type"
+                          required: false
+                          description: "type"
+                          options:
+                            - default
+                            - graduated
                   - id: symbolizers
                     type: objectarray
                     label: Symbolizers
