@@ -2,7 +2,7 @@ geodash.handlers["clickedOnMap"] = function($scope, $interpolate, $http, $q, eve
   console.log('event', event);
   console.log('args', args);
   //
-  var $scope = geodash.api.getScope("geodash-main");
+  var $scope = geodash.util.getScope("geodash-main");
   var map = geodash.var.map;
   var z = $scope.state.view.z;
   var visibleFeatureLayers = $scope.state.view.featurelayers;

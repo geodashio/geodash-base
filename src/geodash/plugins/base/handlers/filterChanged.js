@@ -5,7 +5,7 @@ geodash.handlers["filterChanged"] = function($scope, $interpolate, $http, $q, ev
     $scope.state.filters[args["layer"]] = $.extend(
       $scope.state.filters[args["layer"]],
       args["filter"]);
-    var url = buildPageURL($interpolate, $scope.map_config, $scope.state);
+    var url = buildPageURL($interpolate, $scope.dashboard, $scope.state);
     if(url != undefined)
     {
       history.replaceState($scope.state, "", url);

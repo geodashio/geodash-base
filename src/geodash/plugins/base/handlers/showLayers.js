@@ -1,7 +1,7 @@
 geodash.handlers["showLayers"] = function($scope, $interpolate, $http, $q, event, args) {
     console.log('event', event);
     console.log('args', args);
-    var $scope = geodash.api.getScope("geodash-main");
+    var $scope = geodash.util.getScope("geodash-main");
     var layers = args.layers;
     for(var i = 0; i < layers.length; i++)
     {

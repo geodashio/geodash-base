@@ -1,6 +1,6 @@
 geodash.controllers.GeoDashControllerModal = function(
   $scope, $element, $controller, $interpolate, $timeout,
-  state, map_config, live)
+  state, dashboard, live)
 {
   angular.extend(this, $controller('GeoDashControllerBase', {$element: $element, $scope: $scope}));
 
@@ -58,7 +58,7 @@ geodash.controllers.GeoDashControllerModal = function(
     else
     {
       $("#"+$scope.stack.head.modal).modal('hide');
-      geodash.api.getScope(x.modal).push(x, $scope.stack.backtrace);
+      geodash.util.getScope(x.modal).push(x, $scope.stack.backtrace);
       $("#"+x.modal).modal({'backdrop': 'static','keyboard':false});
       $("#"+x.modal).modal('show');
       $timeout(function(){ geodash.ui.update(x.modal, x.tab); },0);
@@ -85,7 +85,7 @@ geodash.controllers.GeoDashControllerModal = function(
       $scope.update_main(removed);
       $scope.update_ui(removed, $scope.stack.backtrace);
     },0);
-  }
+  };
   $scope.rollback = function(index)
   {
     var count = undefined;
@@ -155,7 +155,7 @@ geodash.controllers.GeoDashControllerModal = function(
     else
     {
       $("#"+$scope.stack.head.modal).modal('hide');
-      var targetScope = geodash.api.getScope(x.modal);
+      var targetScope = geodash.util.getScope(x.modal);
       var backtrace = $scope.stack.backtrace;
       targetScope.clear();
       $timeout(function(){
@@ -201,7 +201,7 @@ geodash.controllers.GeoDashControllerModal = function(
     else
     {
       $("#"+$scope.stack.head.modal).modal('hide');
-      var targetScope = geodash.api.getScope(x.modal);
+      var targetScope = geodash.util.getScope(x.modal);
       var backtrace = $scope.stack.backtrace;
       targetScope.clear();
       $timeout(function(){
@@ -243,7 +243,7 @@ geodash.controllers.GeoDashControllerModal = function(
           $("#"+oldModal).modal('hide');
           $("#"+newModal).modal({'backdrop': 'static', 'keyboard':false});
           $timeout(function(){
-            var newScope = geodash.api.getScope(newModal);
+            var newScope = geodash.util.getScope(newModal);
             newScope.update_stack(backtrace);
             $.each(newScope.stack.head, function(key, value){ newScope[key] = value;});
             newScope.update_breadcrumbs();
@@ -254,7 +254,7 @@ geodash.controllers.GeoDashControllerModal = function(
       }
       else
       {
-        var targetScope = geodash.api.getScope("geodash-sidebar-right");
+        var targetScope = geodash.util.getScope("geodash-sidebar-right");
         targetScope.stack.head.workspace =  targetScope.workspace = workspace;
         targetScope.stack.head.workspace_flat =  targetScope.workspace_flat = workspace_flat;
         $("#"+saved.modal).modal('hide');

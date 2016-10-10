@@ -1,9 +1,10 @@
 geodash.controllers.GeoDashControllerBase = function(
-  $scope, $element, $controller, $interpolate, $timeout,
-  state, map_config, live)
+  $scope, $element, $controller,
+  $interpolate, $timeout,
+  state, dashboard, live)
 {
-  $scope.setValue = geodash.api.setValue;
-  $scope.clearValue = geodash.api.clearValue;
+  $scope.setValue = geodash.util.setValue;
+  $scope.clearValue = geodash.util.clearValue;
 
   $scope.stack = {
     'head': undefined, //backtrace[0]
@@ -38,7 +39,7 @@ geodash.controllers.GeoDashControllerBase = function(
   {
     if(angular.isDefined(backtrace))
     {
-      $scope.stack.backtrace = geodash.api.deepCopy(backtrace);
+      $scope.stack.backtrace = geodash.util.deepCopy(backtrace);
     }
     if($scope.stack.backtrace.length >= 2)
     {
@@ -116,7 +117,7 @@ geodash.controllers.GeoDashControllerBase = function(
       }
       else if(angular.isDefined(x.objectIndex))
       {
-        x.basepath_array = []
+        x.basepath_array = [];
         x.path = x.objectIndex;
         x.path_flat = x.path.replace(new RegExp("\\.", "gi"), "__");
         x.path_array = [x.objectIndex];
@@ -124,12 +125,12 @@ geodash.controllers.GeoDashControllerBase = function(
 
       if(angular.isDefined(x.workspace))
       {
-        x.workspace_flat = geodash.api.flatten(x.workspace);
+        x.workspace_flat = geodash.util.flatten(x.workspace);
       }
 
       if(angular.isDefined(x.schema))
       {
-        x.schema_flat = geodash.api.flatten(x.schema);
+        x.schema_flat = geodash.util.flatten(x.schema);
       }
     }
     return x;
@@ -139,7 +140,7 @@ geodash.controllers.GeoDashControllerBase = function(
   {
     if(angular.isDefined($scope.workspace))
     {
-      var slug = geodash.api.getScope('geodash-main')['state']['slug'];
+      var slug = geodash.util.getScope('geodash-main')['state']['slug'];
       if(angular.isString(slug) && slug.length > 0)
       {
         var template = geodash.api.getEndpoint(name);
@@ -162,7 +163,7 @@ geodash.controllers.GeoDashControllerBase = function(
   $scope.push = function(x, backtrace)
   {
     $scope.clear(); // Clean Old Values
-    x = $scope.expand(x)
+    x = $scope.expand(x);
     $scope.update_stack([x].concat(backtrace || $scope.stack.backtrace));
     $.each($scope.stack.head, function(key, value){ $scope[key] = value; });
     $scope.update_breadcrumbs();
@@ -235,16 +236,16 @@ geodash.controllers.GeoDashControllerBase = function(
           var newModal = $scope.stack.head.modal;
           $("#"+oldModal).modal('hide');
           $("#"+newModal).modal({'backdrop': 'static', 'keyboard':false});
-          //var newScope = geodash.api.getScope(newModal);
+          //var newScope = geodash.util.getScope(newModal);
           // newScope.clear(); Should have already happened in clear_all
           $timeout(function(){
-            var newScope = geodash.api.getScope(newModal);
+            var newScope = geodash.util.getScope(newModal);
             newScope.update_stack(backtrace);
             $.each(newScope.stack.head, function(key, value){ newScope[key] = value;});
             newScope.update_breadcrumbs();
             $("#"+newModal).modal('show');
             $timeout(function(){ geodash.ui.update(newModal); },0);
-          },0);
+          }, 0);
         }
       }
       else
@@ -286,7 +287,7 @@ geodash.controllers.GeoDashControllerBase = function(
         if(angular.isUndefined(s))
         {
           var m = extract('modal', x);
-          s = angular.isDefined(m) ? geodash.api.getScope(m) : $scope;
+          s = angular.isDefined(m) ? geodash.util.getScope(m) : $scope;
         }
         $.each(x, function(key, value){ s[key] = undefined; });
         $.each(clear_array, function(index, value){ s[value] = undefined; });
@@ -446,6 +447,6 @@ $scope.typeaheadDatasetsForSearch = function(x)
 
   $scope.asset = function(id)
   {
-    return geodash.api.getByID(id, $scope.workspace.config.assets);
+    return geodash.util.getByID(id, $scope.workspace.config.assets);
   };
 };

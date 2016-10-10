@@ -229,8 +229,8 @@ var geodash =
     {
       return gulp.src(t.src)
         .pipe(templateCache('templates.js', {
-          templateHeader: 'geodash.templates = {};\n',
-          templateBody: 'geodash.templates["<%= url %>"] = "<%= contents %>";',
+          templateHeader: 'geodash.templates = {"static": {}};\n',
+          templateBody: 'geodash.templates.static["<%= url %>"] = "<%= contents %>";',
           templateFooter: '\n'
         }))
         .pipe(gulp.dest(t.dest));
