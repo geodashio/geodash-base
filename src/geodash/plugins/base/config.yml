@@ -41,6 +41,8 @@ handlers:
   - zoomIn.js
   - zoomOut.js
   - zoomToLayer.js
+  - ol3/printMap.js
+  - ol3/toggleFullScreen.js
 schemas:
   - base.yml
   - baselayers.yml

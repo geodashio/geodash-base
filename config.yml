@@ -6,17 +6,14 @@ path:
   geodash: "./src/geodash"
 plugins:
   - base
-  - branch: master
-    url: https://github.com/geodashio/geodash-plugin-filters.git
+  - { branch: master, url: https://github.com/geodashio/geodash-plugin-filters.git }
   #- file:///home/vagrant/geodash-plugin-filters.git
-  - branch: master
-    url: https://github.com/geodashio/geodash-plugin-legend.git
+  - { branch: master, url: https://github.com/geodashio/geodash-plugin-legend.git }
   #- file:///home/vagrant/geodash-plugin-legend.git
   - welcome
   - about
   - download
-  - version: master
-    url: https://github.com/geodashio/geodash-plugin-overlays.git
+  - { version: master, url: https://github.com/geodashio/geodash-plugin-overlays.git }
   #- file:///home/vagrant/geodash-plugin-overlays.git
   - sidebar_toggle_left
   - sidebar_toggle_right
