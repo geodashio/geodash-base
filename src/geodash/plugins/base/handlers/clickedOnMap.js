@@ -14,40 +14,40 @@ geodash.handlers["clickedOnMap"] = function($scope, $interpolate, $http, $q, eve
   for(var i = 0; i < visibleFeatureLayers.length; i++)
   {
     var fl = geodash.api.getFeatureLayer(visibleFeatureLayers[i], {"scope": $scope});
-    if(fl.type == "geojson")
+    if(angular.isDefined(extract("popup.panes", fl)))
     {
-      if(angular.isDefined("popup.panes", fl))
+      if(fl.type == "geojson")
       {
         featurelayers_geojson.push(fl.id);
       }
-    }
-    else if(angular.isDefined(extract("wfs", fl)))
-    {
-      var params = {
-        service: "wfs",
-        version: extract("wfs.version", fl, '1.0.0'),
-        request: "GetFeature",
-        srsName: "EPSG:4326",
-      };
+      else if(angular.isDefined(extract("wfs", fl)))
+      {
+        var params = {
+          service: "wfs",
+          version: extract("wfs.version", fl, '1.0.0'),
+          request: "GetFeature",
+          srsName: "EPSG:4326",
+        };
 
-      //var targetLocation = new L.LatLng(args.lat, args.lon);
-      var targetLocation = geodash.normalize.point(args);
-      var bbox = geodash.tilemath.point_to_bbox(args.location.lon, args.location.lat, z, 4).join(",");
-      var typeNames = extract('wfs.layers', fl, undefined) || extract('wms.layers', fl, undefined) || [] ;
-      if(angular.isString(typeNames))
-      {
-        typeNames = typeNames.split(",");
-      }
-      for(var j = 0; j < typeNames.length; j++)
-      {
-        typeName = typeNames[j];
-        var url = fl.wfs.url + "?" + $.param($.extend(params, {typeNames: typeName, bbox: bbox}));
-        urls.push(url);
-        fields_by_featuretype[typeName.toLowerCase()] = geodash.layers.aggregate_fields(fl);
-        featurelayers_by_featuretype[typeName.toLowerCase()] = fl;
-        if(!typeName.toLowerCase().startsWith("geonode:"))
+        //var targetLocation = new L.LatLng(args.lat, args.lon);
+        var targetLocation = geodash.normalize.point(args);
+        var bbox = geodash.tilemath.point_to_bbox(args.location.lon, args.location.lat, z, 4).join(",");
+        var typeNames = extract('wfs.layers', fl, undefined) || extract('wms.layers', fl, undefined) || [] ;
+        if(angular.isString(typeNames))
         {
-          featurelayers_by_featuretype["geonode:"+typeName.toLowerCase()] = fl;
+          typeNames = typeNames.split(",");
+        }
+        for(var j = 0; j < typeNames.length; j++)
+        {
+          typeName = typeNames[j];
+          var url = fl.wfs.url + "?" + $.param($.extend(params, {typeNames: typeName, bbox: bbox}));
+          urls.push(url);
+          fields_by_featuretype[typeName.toLowerCase()] = geodash.layers.aggregate_fields(fl);
+          featurelayers_by_featuretype[typeName.toLowerCase()] = fl;
+          if(!typeName.toLowerCase().startsWith("geonode:"))
+          {
+            featurelayers_by_featuretype["geonode:"+typeName.toLowerCase()] = fl;
+          }
         }
       }
     }
