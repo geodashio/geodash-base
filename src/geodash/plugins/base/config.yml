@@ -37,6 +37,7 @@ handlers:
   - switchBaseLayer.js
   #- leaflet/toggleComponent.js
   - ol3/toggleComponent.js
+  - toggleFeatureLayer.js
   - viewChanged.js
   - zoomIn.js
   - zoomOut.js

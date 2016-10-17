@@ -16,7 +16,8 @@ geodash.handlers["clickedOnMap"] = function($scope, $interpolate, $http, $q, eve
     var fl = geodash.api.getFeatureLayer(visibleFeatureLayers[i], {"scope": $scope});
     if(angular.isDefined(extract("popup.panes", fl)))
     {
-      if(fl.type == "geojson")
+      var type_lc = extract("type", fl, "").toLowerCase();
+      if(type_lc == "geojson")
       {
         featurelayers_geojson.push(fl.id);
       }
@@ -59,9 +60,11 @@ geodash.handlers["clickedOnMap"] = function($scope, $interpolate, $http, $q, eve
     featureAndLocation = map.forEachFeatureAtPixel(
       [args.pixel.x, args.pixel.y],
       function(feature, layer){
+        // Will attempt to coerce points to lat/lon if possible
+        var options = {"projection": {"source": map.getView().getProjection(), "target": "EPSG:4326"}};
         return {
           'layer': layer.get('id'),
-          'feature': geodash.normalize.feature(feature),
+          'feature': geodash.normalize.feature(feature, options),
           'location': geodash.normalize.point(ol.proj.toLonLat(map.getCoordinateFromPixel([args.pixel.x, args.pixel.y]), map.getView().getProjection()))
         };
       },
