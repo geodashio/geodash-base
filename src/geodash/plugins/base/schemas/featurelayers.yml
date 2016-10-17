@@ -353,6 +353,12 @@ featurelayers:
                                         - strokeWidth
                                         - strokeColor
                                         - strokeOpacity
+                                        - textAlign
+                                        - textBaseline
+                                        - textCode
+                                        - textColor
+                                        - textContent
+                                        - textFont
                                     - id: value
                                       type: text
                                       label: Property value
