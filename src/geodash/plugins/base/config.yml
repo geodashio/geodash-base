@@ -3,8 +3,9 @@ controllers:
   - GeoDashControllerBase.js
   - GeoDashControllerModal.js
 directives:
+  - svg/ngSvgText.js
+  - svg/svg.js
   - geodashBase.js
-  - svg.js
   - onLinkDone.js
   - onRepeatDone.js
   - geodashBtnClose.js
@@ -38,6 +39,7 @@ handlers:
   #- leaflet/toggleComponent.js
   - ol3/toggleComponent.js
   - toggleFeatureLayer.js
+  - toggleControl.js
   - viewChanged.js
   - zoomIn.js
   - zoomOut.js
