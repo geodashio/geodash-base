@@ -6,7 +6,9 @@ path:
   geodash: "./src/geodash"
 plugins:
   - { version: master, url: https://github.com/geodashio/geodash-plugin-base.git }
+  #- file:///home/vagrant/geodash-plugin-base.git
   - { version: master, url: https://github.com/geodashio/geodash-plugin-handlers.git }
+  #- file:///home/vagrant/geodash-plugin-handlers.git
   - { branch: master, url: https://github.com/geodashio/geodash-plugin-filters.git }
   #- file:///home/vagrant/geodash-plugin-filters.git
   - { branch: master, url: https://github.com/geodashio/geodash-plugin-legend.git }
