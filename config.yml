@@ -41,6 +41,8 @@ resources:
     path: "./lib/ol3/{{ version }}/ol.css"
   - name: font-awesome.min.css
     path: ./lib/font-awesome/4.5.0/css/font-awesome.min.
+  - name: tether.css
+    path: "./lib/tether/{{ version }}/dist/css/tether.min.css"
   # For development, comment the following.
   - name: geodash.js
     path: "./lib/geodashjs/{{ version }}/geodash.js"
@@ -109,3 +111,6 @@ resources:
   - name: showdown.js
     path: "./lib/showdown/{{ version }}/showdown.js"
     minified: "./lib/showdown/{{ version }}/showdown.min.js"
+  - name: tether.js
+    path: "./lib/tether/{{ version }}/dist/js/tether.js"
+    minified: "./lib/tether/{{ version }}/dist/js/tether.min.js"
