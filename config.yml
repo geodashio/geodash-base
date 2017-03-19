@@ -114,3 +114,6 @@ resources:
   - name: tether.js
     path: "./lib/tether/{{ version }}/dist/js/tether.js"
     minified: "./lib/tether/{{ version }}/dist/js/tether.min.js"
+  - name: jsts.js
+    path: "./lib/jsts/{{ version }}/jsts.min.js"
+    minified: "./lib/jsts/{{ version }}/jsts.min.js"
